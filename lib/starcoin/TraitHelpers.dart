@@ -15,6 +15,42 @@ class TraitHelpers {
     return obj;
   }
 
+  static void serialize_option_KeyRotationCapabilityResource(Optional<KeyRotationCapabilityResource> value, BinarySerializer serializer) {
+    if (value.isPresent) {
+        serializer.serialize_option_tag(true);
+        value.value.serialize(serializer);
+    } else {
+        serializer.serialize_option_tag(false);
+    }
+  }
+
+  static Optional<KeyRotationCapabilityResource> deserialize_option_KeyRotationCapabilityResource(BinaryDeserializer deserializer) {
+    bool tag = deserializer.deserialize_option_tag();
+    if (!tag) {
+        return Optional.empty();
+    } else {
+        return Optional.of(KeyRotationCapabilityResource.deserialize(deserializer));
+    }
+  }
+
+  static void serialize_option_WithdrawCapabilityResource(Optional<WithdrawCapabilityResource> value, BinarySerializer serializer) {
+    if (value.isPresent) {
+        serializer.serialize_option_tag(true);
+        value.value.serialize(serializer);
+    } else {
+        serializer.serialize_option_tag(false);
+    }
+  }
+
+  static Optional<WithdrawCapabilityResource> deserialize_option_WithdrawCapabilityResource(BinaryDeserializer deserializer) {
+    bool tag = deserializer.deserialize_option_tag();
+    if (!tag) {
+        return Optional.empty();
+    } else {
+        return Optional.of(WithdrawCapabilityResource.deserialize(deserializer));
+    }
+  }
+
   static void serialize_option_bytes(Optional<Bytes> value, BinarySerializer serializer) {
     if (value.isPresent) {
         serializer.serialize_option_tag(true);

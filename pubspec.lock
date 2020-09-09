@@ -116,6 +116,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.1.4"
+  json_rpc_2:
+    dependency: "direct main"
+    description:
+      name: json_rpc_2
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.2.2"
   matcher:
     dependency: transitive
     description:
@@ -226,5 +233,12 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.0-nullsafety.2"
+  web_socket_channel:
+    dependency: "direct main"
+    description:
+      name: web_socket_channel
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.0"
 sdks:
   dart: ">=2.10.0-0.0.dev <2.10.0"

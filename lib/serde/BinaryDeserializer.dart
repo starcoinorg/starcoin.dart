@@ -84,9 +84,9 @@ abstract class BinaryDeserializer {
   int deserialize_len();
 
   Int128 deserialize_u128() {
-    var high = this.deserialize_u64();
     var low = this.deserialize_u64();
-    return Int128(high,low);
+    var high = this.deserialize_u64();
+    return Int128(high, low);
   }
 
   int getUint8() {

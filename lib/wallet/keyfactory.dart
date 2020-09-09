@@ -5,10 +5,10 @@ import 'package:pointycastle/macs/hmac.dart';
 import 'package:pointycastle/key_derivators/api.dart';
 import 'package:pointycastle/key_derivators/pbkdf2.dart';
 import 'package:pointycastle/digests/sha3.dart';
-import 'package:starcoin_wallet/helper.dart';
-import 'package:starcoin_wallet/keypair.dart';
-import 'package:starcoin_wallet/mnemonic.dart';
-import 'package:starcoin_wallet/constants.dart';
+import 'package:starcoin_wallet/wallet/helper.dart';
+import 'package:starcoin_wallet/wallet/keypair.dart';
+import 'package:starcoin_wallet/wallet/mnemonic.dart';
+import 'package:starcoin_wallet/wallet/constants.dart';
 
 class KeyFactory {
   Digest _sha3256 = new SHA3Digest(256);

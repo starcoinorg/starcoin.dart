@@ -1,5 +1,5 @@
-import 'package:starcoin_wallet/account.dart';
-import 'package:starcoin_wallet/keyfactory.dart';
+import 'package:starcoin_wallet/wallet/account.dart';
+import 'package:starcoin_wallet/wallet/keyfactory.dart';
 
 class Wallet {
   KeyFactory _keyFactory;

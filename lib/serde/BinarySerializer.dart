@@ -77,15 +77,15 @@ abstract class BinarySerializer {
 
   void serialize_variant_index(int index);
 
-  void serialize_str(String str){
-    serialize_uint8list(str.codeUnits);
+  void serialize_str(String str) {
+    serialize_uint8list(Uint8List.fromList(str.codeUnits));
   }
 
   void serialize_len(int len);
 
   void serialize_u128(Int128 value) {
-    serialize_u64(value.high);
     serialize_u64(value.low);
+    serialize_u64(value.high);
   }
 
   int get_buffer_offset() {

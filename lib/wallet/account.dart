@@ -1,6 +1,6 @@
 import 'dart:typed_data';
-import 'package:starcoin_wallet/keypair.dart';
-import 'package:starcoin_wallet/event.dart';
+import 'package:starcoin_wallet/wallet/keypair.dart';
+import 'package:starcoin_wallet/wallet/event.dart';
 
 class AccountState {
   Uint8List authenticationKey;
