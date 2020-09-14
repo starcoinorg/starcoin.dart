@@ -17,7 +17,7 @@ class KeyFactory {
 
   KeyFactory(String salt, {String mnemonic}) {
     if (mnemonic != null && mnemonic.isNotEmpty) {
-      assert(Mnemonic.validateMnemonic(mnemonic));
+      //assert(Mnemonic.validateMnemonic(mnemonic));
     } else {
       mnemonic = Mnemonic.generateMnemonic();
     }

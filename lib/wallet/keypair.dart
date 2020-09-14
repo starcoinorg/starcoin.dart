@@ -29,6 +29,10 @@ class KeyPair {
     return ed25519_dart.publicKey(_privateKey);
   }
 
+  String getPublicKeyHex() {
+    return Helpers.byteToHex(getPublicKey());
+  }
+
   Uint8List getPrivateKey() {
     return _privateKey;
   }

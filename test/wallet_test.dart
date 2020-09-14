@@ -18,15 +18,15 @@ const address1 =
     '6b68105b99cc381e9b4c8a9067fff4e204e1ce0384e2c0ce095321ed8a50e57b';
 const address2 =
     'e7f884d74d8372becba990f374bb92a3edd19be9d8d1e50cac38c79d6f57d1c0';
-const RESOURCE_TAG = 1;
+const URL = "http://127.0.0.1:9850";
 
 void main() {
   test('wallet test', () {
-    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
+    Wallet wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
     Account account = wallet.newAccount();
-    //print(Helpers.byteToHex(account.keyPair.getPrivateKey()));
+    print(Helpers.byteToHex(account.keyPair.getPrivateKey()));
     var public_key_hex = Helpers.byteToHex(account.keyPair.getPublicKey());
-    //print("public key is $public_key_hex");
+    print("public key is $public_key_hex");
     expect("7d43d5269ddb89cdb7f7b812689bf135", account.getAddress());
 
     var message = Uint8List.fromList([1, 2, 3, 4]);
@@ -48,7 +48,7 @@ void main() {
     //var txpool_state = await client.sendRequest('txpool.state');
     //print('txpool state is $txpool_state');
 
-    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
+    Wallet wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
     Account account = wallet.newAccount();
     AccountAddress sender = AccountAddress(account.keyPair.getAddressBytes());
 
@@ -75,6 +75,37 @@ void main() {
     }
     var resource = AccountResource.lcsDeserialize(Uint8List.fromList(list_int));
     print("resouce is " + resource.sequence_number.toString());
+
+    struct_tag = StructTag(
+        AccountAddress(Helpers.hexToBytes("00000000000000000000000000000001")),
+        Identifier("Account"),
+        Identifier("Balance"),
+        List.from([
+          TypeTagStructItem(StructTag(
+              AccountAddress(
+                  Helpers.hexToBytes("00000000000000000000000000000001")),
+              Identifier("STC"),
+              Identifier("STC"),
+              List()))
+        ]));
+    path = List();
+    path.add(RESOURCE_TAG);
+
+    hash = lcsHash(struct_tag.lcsSerialize(), "LIBRA::StructTag");
+    path.addAll(hash);
+
+    //var hex_access_path = Helpers.byteToHex(Uint8List.fromList(path));
+    //print("hash is " + hex_access_path);
+    accessPath = AccessPath(sender, Bytes(Uint8List.fromList(path)));
+    result = await client.sendRequest(
+        'state_hex.get', [Helpers.byteToHex(accessPath.lcsSerialize())]);
+    list_int = List<int>();
+    for (var i in result) {
+      list_int.add(i);
+    }
+    var balanceResource =
+        BalanceResource.lcsDeserialize(Uint8List.fromList(list_int));
+    print("balance is " + balanceResource.token.low.toString());
 
     var empty_script = TransactionBuilder.encode_empty_script_script();
     struct_tag = StructTag(
@@ -117,5 +148,16 @@ void main() {
     result = await client.sendRequest('txpool.submit_hex_transaction',
         [Helpers.byteToHex(signed_txn.lcsSerialize())]);
     print('result is $result');
+  });
+
+  test('Account', () async {
+    Wallet wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
+    Account account = wallet.newAccount();
+
+    final balance = await account.balanceOfStc();
+    print("balance is " + balance.low.toString());
+
+    await account.transferSTC(Int128(0, 200),
+        AccountAddress(Helpers.hexToBytes("aa6215f72608e4d161991427b49b6e67")));
   });
 }

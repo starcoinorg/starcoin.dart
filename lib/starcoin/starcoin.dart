@@ -45,3 +45,4 @@ part 'WriteOp.dart';
 part 'WriteSet.dart';
 part 'WriteSetMut.dart';
 part 'WriteSetPayload.dart';
+part 'BalanceResource.dart';
