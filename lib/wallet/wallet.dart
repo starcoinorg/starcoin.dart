@@ -33,6 +33,13 @@ class Wallet {
     return result;
   }
 
+  Future<dynamic> getTransactionInfo(String hash) async {
+    final client = StarcoinClient(url, Client());
+    final result =
+        await client.makeRPCCall('chain.get_transaction_info', [hash]);
+    return result;
+  }
+
   void addAccount(Account account) {
     String address = account.keyPair.getAddress();
     _accounts[address] = account;

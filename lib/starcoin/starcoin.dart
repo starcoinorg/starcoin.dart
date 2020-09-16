@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:optional/optional.dart';
 import 'package:starcoin_wallet/serde/serde.dart';
 import 'package:starcoin_wallet/lcs/lcs.dart';
+import 'package:tuple/tuple.dart';
 
 part 'TraitHelpers.dart';
 part 'AccessPath.dart';
@@ -46,3 +47,4 @@ part 'WriteSet.dart';
 part 'WriteSetMut.dart';
 part 'WriteSetPayload.dart';
 part 'BalanceResource.dart';
+part 'Kind.dart';

@@ -94,6 +94,10 @@ class Account {
     path.addAll(hash);
 
     final result = await getState(Uint8List.fromList(path));
+
+    if (result == null) {
+      return Int128(0, 0);
+    }
     final balanceResource =
         BalanceResource.lcsDeserialize(Uint8List.fromList(result));
     return balanceResource.token;
@@ -108,6 +112,10 @@ class Account {
     final result = await jsonRpc.makeRPCCall(
         'state_hex.get', [Helpers.byteToHex(accessPath.lcsSerialize())]);
 
+    if (result == null) {
+      return null;
+    }
+
     final listInt = List<int>();
     for (var i in result) {
       listInt.add(i);
@@ -119,6 +127,7 @@ class Account {
   Future<SubmitTransactionResult> transferSTC(
     Int128 amount,
     AccountAddress reciever,
+    Bytes publicKey,
   ) async {
     AccountAddress sender = AccountAddress(this.keyPair.getAddressBytes());
     final client = StarcoinClient(url, Client());
@@ -134,10 +143,7 @@ class Account {
         List());
 
     var transfer_script = TransactionBuilder.encode_peer_to_peer_script(
-        TypeTagStructItem(struct_tag),
-        reciever,
-        Bytes(Helpers.hexToBytes("703038dffdf4db03ad11fc75cfdec595")),
-        amount);
+        TypeTagStructItem(struct_tag), reciever, publicKey, amount);
 
     final seq = await getSeq();
     RawTransaction raw_txn = RawTransaction(

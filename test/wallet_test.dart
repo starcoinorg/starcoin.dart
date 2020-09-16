@@ -12,6 +12,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:starcoin_wallet/wallet/hash.dart';
 import 'dart:async';
+import 'package:pub_sub/json_rpc_2.dart';
 
 const String mnemonic =
     'danger gravity economy coconut flavor cart relax cactus analyst cradle pelican guitar balance there mail check where scrub topple shock connect valid follow flip';
@@ -155,12 +156,15 @@ void main() {
   test('Account', () async {
     Wallet wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
     Account account = wallet.newAccount();
+    Account reciever = wallet.newAccount();
 
     final balance = await account.balanceOfStc();
     print("balance is " + balance.low.toString());
 
-    final result = await account.transferSTC(Int128(0, 200),
-        AccountAddress(Helpers.hexToBytes("aa6215f72608e4d161991427b49b6e67")));
+    final result = await account.transferSTC(
+        Int128(0, 200),
+        AccountAddress(reciever.keyPair.getAddressBytes()),
+        Bytes(reciever.keyPair.getPublicKey()));
     print("result is $result");
 
     await Future.delayed(Duration(seconds: 5));
@@ -169,6 +173,25 @@ void main() {
       final txn = await wallet.getTransaction(result.txnHash);
       print("txn is $txn");
     }
+
+    if (result.result == true) {
+      final txn = await wallet.getTransactionInfo(result.txnHash);
+      print("txn_info is $txn");
+    }
+  });
+
+  test('sub', () async {
+    var socket = WebSocketChannel.connect(Uri.parse('ws://127.0.0.1:9870'));
+    //var client = Client(socket.cast<String>());
+    //unawaited(client.listen());
+    var client =
+        new JsonRpc2Client('json_rpc_2_test::secret', socket.cast<String>());
+
+    var sub = await client.subscribe(
+      'starcoin_subscribe_hex',
+    );
+
+    print(sub);
   });
 
   test('Hash', () {
