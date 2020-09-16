@@ -1,5 +1,7 @@
 import 'package:starcoin_wallet/wallet/account.dart';
 import 'package:starcoin_wallet/wallet/keyfactory.dart';
+import 'package:starcoin_wallet/wallet/client.dart';
+import 'package:http/http.dart';
 
 class Wallet {
   KeyFactory _keyFactory;
@@ -23,6 +25,12 @@ class Wallet {
     Account account = new Account(_keyFactory.generateKey(depth), url);
     addAccount(account);
     return account;
+  }
+
+  Future<dynamic> getTransaction(String hash) async {
+    final client = StarcoinClient(url, Client());
+    final result = await client.makeRPCCall('chain.get_transaction', [hash]);
+    return result;
   }
 
   void addAccount(Account account) {

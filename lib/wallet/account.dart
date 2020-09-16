@@ -36,6 +36,21 @@ class AccountState {
   }
 }
 
+class SubmitTransactionResult {
+  bool result;
+  String txnHash;
+
+  SubmitTransactionResult(bool result, String txnHash) {
+    this.result = result;
+    this.txnHash = txnHash;
+  }
+
+  @override
+  String toString() {
+    return "result is $result, txnHash is $txnHash";
+  }
+}
+
 class Account {
   KeyPair keyPair;
   String _address;
@@ -101,7 +116,7 @@ class Account {
     return listInt;
   }
 
-  Future<bool> transferSTC(
+  Future<SubmitTransactionResult> transferSTC(
     Int128 amount,
     AccountAddress reciever,
   ) async {
@@ -137,7 +152,7 @@ class Account {
 
     var raw_txn_bytes = raw_txn.lcsSerialize();
 
-    log("txn hash is " + Helpers.byteToHex(rawHash(raw_txn_bytes)));
+    //print("raw_txn_bytes is $raw_txn_bytes");
 
     var sign_bytes = this
         .keyPair
@@ -151,14 +166,18 @@ class Account {
         TransactionAuthenticatorEd25519Item(pub_key, sign);
 
     SignedUserTransaction signed_txn = SignedUserTransaction(raw_txn, author);
+
+    final txnHash = Helpers.byteToHex(
+        lcsHash(signed_txn.lcsSerialize(), "LIBRA::SignedUserTransaction"));
+
     final result = await client.makeRPCCall('txpool.submit_hex_transaction',
         [Helpers.byteToHex(signed_txn.lcsSerialize())]);
 
     if (result['Ok'] == null) {
-      return true;
+      return SubmitTransactionResult(true, txnHash);
     } else {
       log("transfer failed " + result.toString());
-      return false;
+      return SubmitTransactionResult(false, txnHash);
     }
   }
 

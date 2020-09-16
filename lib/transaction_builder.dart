@@ -108,7 +108,7 @@ class TransactionBuilder {
   static Script encode_create_account_script(
       TypeTag token_type,
       AccountAddress fresh_address,
-      Bytes auth_key_prefix,
+      Bytes public_key_vec,
       Int128 initial_amount) {
     var code = new Bytes(Uint8List.fromList([
       -95,
@@ -331,7 +331,7 @@ class TransactionBuilder {
     ty_args[0] = token_type;
     List<TransactionArgument> args = new List<TransactionArgument>(3);
     args[0] = new TransactionArgumentAddressItem(fresh_address);
-    args[1] = new TransactionArgumentU8VectorItem(auth_key_prefix);
+    args[1] = new TransactionArgumentU8VectorItem(public_key_vec);
     args[2] = new TransactionArgumentU128Item(initial_amount);
 
     var script = new Script(code, ty_args, args);
@@ -349,7 +349,7 @@ class TransactionBuilder {
   }
 
   static Script encode_peer_to_peer_script(TypeTag token_type,
-      AccountAddress payee, Bytes auth_key_prefix, Int128 amount) {
+      AccountAddress payee, Bytes payee_public_key, Int128 amount) {
     var code = new Bytes(Uint8List.fromList([
       -95,
       28,
@@ -499,7 +499,7 @@ class TransactionBuilder {
       8,
       10,
       1,
-      10,
+      11,
       2,
       56,
       0,
@@ -517,7 +517,7 @@ class TransactionBuilder {
     ty_args[0] = token_type;
     List<TransactionArgument> args = new List<TransactionArgument>(3);
     args[0] = new TransactionArgumentAddressItem(payee);
-    args[1] = new TransactionArgumentU8VectorItem(auth_key_prefix);
+    args[1] = new TransactionArgumentU8VectorItem(payee_public_key);
     args[2] = new TransactionArgumentU128Item(amount);
 
     var script = new Script(code, ty_args, args);
@@ -527,7 +527,7 @@ class TransactionBuilder {
   static Script encode_peer_to_peer_with_metadata_script(
       TypeTag token_type,
       AccountAddress payee,
-      Bytes auth_key_prefix,
+      Bytes payee_public_key,
       Int128 amount,
       Bytes metadata) {
     var code = new Bytes(Uint8List.fromList([
@@ -717,7 +717,7 @@ class TransactionBuilder {
     ty_args[0] = token_type;
     List<TransactionArgument> args = new List<TransactionArgument>(4);
     args[0] = new TransactionArgumentAddressItem(payee);
-    args[1] = new TransactionArgumentU8VectorItem(auth_key_prefix);
+    args[1] = new TransactionArgumentU8VectorItem(payee_public_key);
     args[2] = new TransactionArgumentU128Item(amount);
     args[3] = new TransactionArgumentU8VectorItem(metadata);
 
