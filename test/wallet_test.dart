@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/serde/serde.dart';
+import 'package:starcoin_wallet/wallet/json_rpc.dart';
 
 import 'package:starcoin_wallet/wallet/wallet.dart';
 import 'package:starcoin_wallet/wallet/account.dart';
@@ -12,7 +13,9 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:starcoin_wallet/wallet/hash.dart';
 import 'dart:async';
-import 'package:pub_sub/json_rpc_2.dart';
+import 'package:starcoin_wallet/wallet/pubsub.dart';
+import 'package:http/http.dart' as http;
+import 'package:web_socket_channel/io.dart';
 
 const String mnemonic =
     'danger gravity economy coconut flavor cart relax cactus analyst cradle pelican guitar balance there mail check where scrub topple shock connect valid follow flip';
@@ -181,17 +184,32 @@ void main() {
   });
 
   test('sub', () async {
-    var socket = WebSocketChannel.connect(Uri.parse('ws://127.0.0.1:9870'));
-    //var client = Client(socket.cast<String>());
+    var socket = IOWebSocketChannel.connect(Uri.parse('ws://127.0.0.1:9870'));
+    var rpc = JsonRPC("http://127.0.0.1:9850", http.Client());
+    var client = PubSubClient(socket.cast<String>(), rpc);
+
+    final subscription =
+        client.addFilter(NewBlockFilter()).take(1).listen((event) {
+      print(event);
+    });
+
+    //await for (var x in subscription) {
+    //  print(x);
+    //  break;
+    //}
+
+    await subscription.asFuture();
+    await subscription.cancel();
+
     //unawaited(client.listen());
-    var client =
-        new JsonRpc2Client('json_rpc_2_test::secret', socket.cast<String>());
+    //var client =
+    //    new JsonRpc2Client('json_rpc_2_test::secret', socket.cast<String>());
 
-    var sub = await client.subscribe(
-      'starcoin_subscribe_hex',
-    );
+    //var sub = await client.subscribe(
+    //  'starcoin_subscribe_hex',
+    //);
 
-    print(sub);
+    //print(sub);
   });
 
   test('Hash', () {
