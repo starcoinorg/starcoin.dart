@@ -151,6 +151,24 @@ class TraitHelpers {
     return obj;
   }
 
+  static void serialize_vector_EventKey(
+      List<EventKey> value, BinarySerializer serializer) {
+    serializer.serialize_len(value.length);
+    for (EventKey item in value) {
+      item.serialize(serializer);
+    }
+  }
+
+  static List<EventKey> deserialize_vector_EventKey(
+      BinaryDeserializer deserializer) {
+    int length = deserializer.deserialize_len();
+    List<EventKey> obj = new List<EventKey>(length);
+    for (int i = 0; i < length; i++) {
+      obj[i] = EventKey.deserialize(deserializer);
+    }
+    return obj;
+  }
+
   static void serialize_vector_Module(
       List<Module> value, BinarySerializer serializer) {
     serializer.serialize_len(value.length);

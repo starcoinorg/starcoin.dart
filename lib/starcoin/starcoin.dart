@@ -48,3 +48,5 @@ part 'WriteSetMut.dart';
 part 'WriteSetPayload.dart';
 part 'BalanceResource.dart';
 part 'Kind.dart';
+part 'EventFilter.dart';
+part 'PubSubParams.dart';

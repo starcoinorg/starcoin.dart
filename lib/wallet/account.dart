@@ -12,6 +12,9 @@ import 'package:http/http.dart';
 
 const RESOURCE_TAG = 1;
 
+const SENDSALT = 1;
+const RECVSALT = 0;
+
 class AccountState {
   Uint8List authenticationKey;
   BigInt balance, sequenceNumber;
@@ -216,6 +219,26 @@ class Account {
     }
     var resource = AccountResource.lcsDeserialize(Uint8List.fromList(list_int));
     return resource.sequence_number;
+  }
+
+  EventKey sendEventKey() {
+    return genEventKey(SENDSALT);
+  }
+
+  EventKey recvEventKey() {
+    return genEventKey(RECVSALT);
+  }
+
+  EventKey genEventKey(int salt) {
+    AccountAddress self = AccountAddress(this.keyPair.getAddressBytes());
+    List<int> result = List<int>();
+
+    var bdata = new ByteData(8);
+    bdata.setUint64(0, salt, Endian.little);
+    result.addAll(bdata.buffer.asUint8List());
+    result.addAll(self.value);
+
+    return EventKey(Bytes(Uint8List.fromList(result)));
   }
 
   @override

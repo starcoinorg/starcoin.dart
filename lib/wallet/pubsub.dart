@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
+import 'package:starcoin_wallet/wallet/account.dart';
 import 'package:starcoin_wallet/wallet/json_rpc.dart';
 import 'package:json_rpc_2/json_rpc_2.dart' as rpc;
 import 'dart:async';
 import 'package:stream_channel/stream_channel.dart';
 import 'package:starcoin_wallet/wallet/helper.dart';
 import 'dart:developer';
+import 'package:optional/optional.dart';
 
 const _pingDuration = Duration(seconds: 2);
 
@@ -42,6 +46,53 @@ class NewBlockFilter extends Filter<dynamic> {
   PubSubCreationParams createPubSub() {
     return PubSubCreationParams(
         [Helpers.byteToHex(KindNewHeadsItem().lcsSerialize())]);
+  }
+}
+
+class NewMintBlockFilter extends Filter<dynamic> {
+  @override
+  FilterCreationParams create() {
+    return null;
+  }
+
+  @override
+  dynamic parseChanges(dynamic log) {
+    return log;
+  }
+
+  @override
+  PubSubCreationParams createPubSub() {
+    return PubSubCreationParams(
+        [Helpers.byteToHex(KindNewMintBlockItem().lcsSerialize())]);
+  }
+}
+
+class NewTxnSendRecvEventFilter extends Filter<dynamic> {
+  final Account account;
+
+  NewTxnSendRecvEventFilter(this.account);
+
+  @override
+  FilterCreationParams create() {
+    return null;
+  }
+
+  @override
+  dynamic parseChanges(dynamic log) {
+    return log;
+  }
+
+  @override
+  PubSubCreationParams createPubSub() {
+    final recvEventKey = account.recvEventKey();
+    final sendEventKey = account.sendEventKey();
+    final eventFilter = EventFilter(Optional.empty(), Optional.empty(),
+        [sendEventKey, recvEventKey], Optional.empty());
+    final events = PubSubParamsEventsItem(eventFilter);
+    return PubSubCreationParams([
+      Helpers.byteToHex(KindEventsItem().lcsSerialize()),
+      jsonEncode(events)
+    ]);
   }
 }
 

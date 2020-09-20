@@ -187,29 +187,18 @@ void main() {
     var socket = IOWebSocketChannel.connect(Uri.parse('ws://127.0.0.1:9870'));
     var rpc = JsonRPC("http://127.0.0.1:9850", http.Client());
     var client = PubSubClient(socket.cast<String>(), rpc);
+    final wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
+    final account = wallet.newAccount();
 
-    final subscription =
-        client.addFilter(NewBlockFilter()).take(1).listen((event) {
+    var subscription = client
+        .addFilter(NewTxnSendRecvEventFilter(account))
+        .take(1)
+        .listen((event) {
       print(event);
     });
 
-    //await for (var x in subscription) {
-    //  print(x);
-    //  break;
-    //}
-
     await subscription.asFuture();
     await subscription.cancel();
-
-    //unawaited(client.listen());
-    //var client =
-    //    new JsonRpc2Client('json_rpc_2_test::secret', socket.cast<String>());
-
-    //var sub = await client.subscribe(
-    //  'starcoin_subscribe_hex',
-    //);
-
-    //print(sub);
   });
 
   test('Hash', () {

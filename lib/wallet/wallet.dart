@@ -40,6 +40,12 @@ class Wallet {
     return result;
   }
 
+  Future<dynamic> getBlockByHash(String hash) async {
+    final client = StarcoinClient(url, Client());
+    final result = await client.makeRPCCall('chain.get_block_by_hash', [hash]);
+    return result;
+  }
+
   void addAccount(Account account) {
     String address = account.keyPair.getAddress();
     _accounts[address] = account;
