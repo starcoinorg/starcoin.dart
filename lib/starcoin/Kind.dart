@@ -73,7 +73,8 @@ class KindNewHeadsItem extends Kind {
   KindNewHeadsItem.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 0
+    "type" : 0,
+    "type_name" : "NewHeads"
   };
 }
 
@@ -104,7 +105,8 @@ class KindEventsItem extends Kind {
   KindEventsItem.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 1
+    "type" : 1,
+    "type_name" : "Events"
   };
 }
 
@@ -135,7 +137,8 @@ class KindNewPendingTransactionsItem extends Kind {
   KindNewPendingTransactionsItem.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 2
+    "type" : 2,
+    "type_name" : "NewPendingTransactions"
   };
 }
 
@@ -166,6 +169,7 @@ class KindNewMintBlockItem extends Kind {
   KindNewMintBlockItem.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 3
+    "type" : 3,
+    "type_name" : "NewMintBlock"
   };
 }

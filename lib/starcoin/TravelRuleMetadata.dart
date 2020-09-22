@@ -79,6 +79,7 @@ class TravelRuleMetadataTravelRuleMetadataVersion0Item extends TravelRuleMetadat
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 0
+    "type" : 0,
+    "type_name" : "TravelRuleMetadataVersion0"
   };
 }

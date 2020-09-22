@@ -81,7 +81,8 @@ class TransactionUserTransactionItem extends Transaction {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 0
+    "type" : 0,
+    "type_name" : "UserTransaction"
   };
 }
 
@@ -124,6 +125,7 @@ class TransactionBlockMetadataItem extends Transaction {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 1
+    "type" : 1,
+    "type_name" : "BlockMetadata"
   };
 }

@@ -69,7 +69,8 @@ class PubSubParamsNoneItem extends PubSubParams {
   PubSubParamsNoneItem.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 0
+    "type" : 0,
+    "type_name" : "None"
   };
 }
 
@@ -112,6 +113,7 @@ class PubSubParamsEventsItem extends PubSubParams {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 1
+    "type" : 1,
+    "type_name" : "Events"
   };
 }

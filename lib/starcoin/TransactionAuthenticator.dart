@@ -90,7 +90,8 @@ class TransactionAuthenticatorEd25519Item extends TransactionAuthenticator {
   Map<String, dynamic> toJson() => {
     "public_key" : public_key ,
     "signature" : signature ,
-    "type" : 0
+    "type" : 0,
+    "type_name" : "Ed25519"
   };
 }
 
@@ -142,6 +143,7 @@ class TransactionAuthenticatorMultiEd25519Item extends TransactionAuthenticator 
   Map<String, dynamic> toJson() => {
     "public_key" : public_key ,
     "signature" : signature ,
-    "type" : 1
+    "type" : 1,
+    "type_name" : "MultiEd25519"
   };
 }

@@ -73,7 +73,8 @@ class MetadataUndefinedItem extends Metadata {
   MetadataUndefinedItem.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 0
+    "type" : 0,
+    "type_name" : "Undefined"
   };
 }
 
@@ -116,7 +117,8 @@ class MetadataGeneralMetadataItem extends Metadata {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 1
+    "type" : 1,
+    "type_name" : "GeneralMetadata"
   };
 }
 
@@ -159,7 +161,8 @@ class MetadataTravelRuleMetadataItem extends Metadata {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 2
+    "type" : 2,
+    "type_name" : "TravelRuleMetadata"
   };
 }
 
@@ -202,6 +205,7 @@ class MetadataUnstructuredBytesMetadataItem extends Metadata {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 3
+    "type" : 3,
+    "type_name" : "UnstructuredBytesMetadata"
   };
 }

@@ -79,6 +79,7 @@ class GeneralMetadataGeneralMetadataVersion0Item extends GeneralMetadata {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 0
+    "type" : 0,
+    "type_name" : "GeneralMetadataVersion0"
   };
 }

@@ -69,7 +69,8 @@ class WriteOpDeletionItem extends WriteOp {
   WriteOpDeletionItem.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 0
+    "type" : 0,
+    "type_name" : "Deletion"
   };
 }
 
@@ -112,6 +113,7 @@ class WriteOpValueItem extends WriteOp {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 1
+    "type" : 1,
+    "type_name" : "Value"
   };
 }

@@ -79,6 +79,7 @@ class ContractEventV0Item extends ContractEvent {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 0
+    "type" : 0,
+    "type_name" : "V0"
   };
 }

@@ -81,7 +81,8 @@ class WriteSetPayloadDirectItem extends WriteSetPayload {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 0
+    "type" : 0,
+    "type_name" : "Direct"
   };
 }
 
@@ -133,6 +134,7 @@ class WriteSetPayloadScriptItem extends WriteSetPayload {
   Map<String, dynamic> toJson() => {
     "execute_as" : execute_as ,
     "script" : script ,
-    "type" : 1
+    "type" : 1,
+    "type_name" : "Script"
   };
 }

@@ -89,7 +89,8 @@ class TransactionArgumentU8Item extends TransactionArgument {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 0
+    "type" : 0,
+    "type_name" : "U8"
   };
 }
 
@@ -132,7 +133,8 @@ class TransactionArgumentU64Item extends TransactionArgument {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 1
+    "type" : 1,
+    "type_name" : "U64"
   };
 }
 
@@ -175,7 +177,8 @@ class TransactionArgumentU128Item extends TransactionArgument {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 2
+    "type" : 2,
+    "type_name" : "U128"
   };
 }
 
@@ -218,7 +221,8 @@ class TransactionArgumentAddressItem extends TransactionArgument {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 3
+    "type" : 3,
+    "type_name" : "Address"
   };
 }
 
@@ -261,7 +265,8 @@ class TransactionArgumentU8VectorItem extends TransactionArgument {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 4
+    "type" : 4,
+    "type_name" : "U8Vector"
   };
 }
 
@@ -304,6 +309,7 @@ class TransactionArgumentBoolItem extends TransactionArgument {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 5
+    "type" : 5,
+    "type_name" : "Bool"
   };
 }

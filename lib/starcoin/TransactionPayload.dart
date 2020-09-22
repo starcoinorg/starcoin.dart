@@ -81,7 +81,8 @@ class TransactionPayloadScriptItem extends TransactionPayload {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 0
+    "type" : 0,
+    "type_name" : "Script"
   };
 }
 
@@ -124,6 +125,7 @@ class TransactionPayloadPackageItem extends TransactionPayload {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 1
+    "type" : 1,
+    "type_name" : "Package"
   };
 }

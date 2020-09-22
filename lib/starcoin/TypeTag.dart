@@ -81,7 +81,8 @@ class TypeTagBoolItem extends TypeTag {
   TypeTagBoolItem.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 0
+    "type" : 0,
+    "type_name" : "Bool"
   };
 }
 
@@ -112,7 +113,8 @@ class TypeTagU8Item extends TypeTag {
   TypeTagU8Item.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 1
+    "type" : 1,
+    "type_name" : "U8"
   };
 }
 
@@ -143,7 +145,8 @@ class TypeTagU64Item extends TypeTag {
   TypeTagU64Item.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 2
+    "type" : 2,
+    "type_name" : "U64"
   };
 }
 
@@ -174,7 +177,8 @@ class TypeTagU128Item extends TypeTag {
   TypeTagU128Item.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 3
+    "type" : 3,
+    "type_name" : "U128"
   };
 }
 
@@ -205,7 +209,8 @@ class TypeTagAddressItem extends TypeTag {
   TypeTagAddressItem.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 4
+    "type" : 4,
+    "type_name" : "Address"
   };
 }
 
@@ -236,7 +241,8 @@ class TypeTagSignerItem extends TypeTag {
   TypeTagSignerItem.loadJson(Map<String, dynamic> json);
 
   Map<String, dynamic> toJson() => {
-    "type" : 5
+    "type" : 5,
+    "type_name" : "Signer"
   };
 }
 
@@ -279,7 +285,8 @@ class TypeTagVectorItem extends TypeTag {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 6
+    "type" : 6,
+    "type_name" : "Vector"
   };
 }
 
@@ -322,6 +329,7 @@ class TypeTagStructItem extends TypeTag {
 
   Map<String, dynamic> toJson() => {
     "value" : value ,
-    "type" : 7
+    "type" : 7,
+    "type_name" : "Struct"
   };
 }
