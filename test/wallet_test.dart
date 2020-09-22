@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:starcoin_wallet/starcoin/starcoin.dart';
+import 'package:starcoin_wallet/starcoin/starcoin_types.dart';
 import 'package:starcoin_wallet/serde/serde.dart';
 import 'package:starcoin_wallet/wallet/json_rpc.dart';
 

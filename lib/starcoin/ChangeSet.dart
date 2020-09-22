@@ -54,4 +54,13 @@ class ChangeSet {
     value = 31 * value + (this.events != null ? this.events.hashCode : 0);
     return value;
   }
+
+  ChangeSet.fromJson(Map<String, dynamic> json) :
+    write_set = WriteSet.fromJson(json['write_set']) ,
+    events = List<ContractEvent>.from(json['events'].map((f) => ContractEvent.fromJson(f)).toList()) ;
+
+  Map<String, dynamic> toJson() => {
+    "write_set" : write_set ,
+    "events" : events ,
+  };
 }

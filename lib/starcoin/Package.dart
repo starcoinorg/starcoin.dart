@@ -61,4 +61,15 @@ class Package {
     value = 31 * value + (this.init_script != null ? this.init_script.hashCode : 0);
     return value;
   }
+
+  Package.fromJson(Map<String, dynamic> json) :
+    package_address = AccountAddress.fromJson(json['package_address']) ,
+    modules = List<Module>.from(json['modules'].map((f) => Module.fromJson(f)).toList()) ,
+    init_script = Script.fromJson(json['init_script']) ;
+
+  Map<String, dynamic> toJson() => {
+    "package_address" : package_address ,
+    "modules" : modules ,
+    "init_script" : init_script ,
+  };
 }

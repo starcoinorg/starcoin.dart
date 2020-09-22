@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:starcoin_wallet/starcoin/starcoin.dart';
+import 'package:starcoin_wallet/starcoin/starcoin_types.dart';
 import 'package:starcoin_wallet/wallet/account.dart';
 import 'package:starcoin_wallet/wallet/json_rpc.dart';
 import 'package:json_rpc_2/json_rpc_2.dart' as rpc;

@@ -1,6 +1,7 @@
 part of starcoin_types;
 
 abstract class TransactionPayload {
+  TransactionPayload();
 
   void serialize(BinarySerializer serializer);
 
@@ -27,6 +28,17 @@ abstract class TransactionPayload {
       }
       return value;
   }
+
+  static TransactionPayload fromJson(Map<String, dynamic> json){
+    final type = json['type'] as int;
+    switch (type) {
+      case 0: return TransactionPayloadScriptItem.loadJson(json);
+      case 1: return TransactionPayloadPackageItem.loadJson(json);
+      default: throw new Exception("Unknown type for TransactionPayload: " + type.toString());
+    }
+  }
+
+  Map<String, dynamic> toJson();
 }
 
 
@@ -63,6 +75,14 @@ class TransactionPayloadScriptItem extends TransactionPayload {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  TransactionPayloadScriptItem.loadJson(Map<String, dynamic> json) :
+    value = Script.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 0
+  };
 }
 
 class TransactionPayloadPackageItem extends TransactionPayload {
@@ -98,4 +118,12 @@ class TransactionPayloadPackageItem extends TransactionPayload {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  TransactionPayloadPackageItem.loadJson(Map<String, dynamic> json) :
+    value = Package.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 1
+  };
 }

@@ -1,6 +1,7 @@
 part of starcoin_types;
 
 abstract class WriteSetPayload {
+  WriteSetPayload();
 
   void serialize(BinarySerializer serializer);
 
@@ -27,6 +28,17 @@ abstract class WriteSetPayload {
       }
       return value;
   }
+
+  static WriteSetPayload fromJson(Map<String, dynamic> json){
+    final type = json['type'] as int;
+    switch (type) {
+      case 0: return WriteSetPayloadDirectItem.loadJson(json);
+      case 1: return WriteSetPayloadScriptItem.loadJson(json);
+      default: throw new Exception("Unknown type for WriteSetPayload: " + type.toString());
+    }
+  }
+
+  Map<String, dynamic> toJson();
 }
 
 
@@ -63,6 +75,14 @@ class WriteSetPayloadDirectItem extends WriteSetPayload {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  WriteSetPayloadDirectItem.loadJson(Map<String, dynamic> json) :
+    value = ChangeSet.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 0
+  };
 }
 
 class WriteSetPayloadScriptItem extends WriteSetPayload {
@@ -105,4 +125,14 @@ class WriteSetPayloadScriptItem extends WriteSetPayload {
     value = 31 * value + (this.script != null ? this.script.hashCode : 0);
     return value;
   }
+
+  WriteSetPayloadScriptItem.loadJson(Map<String, dynamic> json) :
+    execute_as = AccountAddress.fromJson(json['execute_as']) ,
+    script = Script.fromJson(json['script']) ;
+
+  Map<String, dynamic> toJson() => {
+    "execute_as" : execute_as ,
+    "script" : script ,
+    "type" : 1
+  };
 }

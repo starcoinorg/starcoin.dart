@@ -68,4 +68,17 @@ class StructTag {
     value = 31 * value + (this.type_params != null ? this.type_params.hashCode : 0);
     return value;
   }
+
+  StructTag.fromJson(Map<String, dynamic> json) :
+    address = AccountAddress.fromJson(json['address']) ,
+    module = Identifier.fromJson(json['module']) ,
+    name = Identifier.fromJson(json['name']) ,
+    type_params = List<TypeTag>.from(json['type_params'].map((f) => TypeTag.fromJson(f)).toList()) ;
+
+  Map<String, dynamic> toJson() => {
+    "address" : address ,
+    "module" : module ,
+    "name" : name ,
+    "type_params" : type_params ,
+  };
 }

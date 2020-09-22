@@ -54,4 +54,13 @@ class EventHandle {
     value = 31 * value + (this.key != null ? this.key.hashCode : 0);
     return value;
   }
+
+  EventHandle.fromJson(Map<String, dynamic> json) :
+    count = json['count'] ,
+    key = EventKey.fromJson(json['key']) ;
+
+  Map<String, dynamic> toJson() => {
+    "count" : count ,
+    "key" : key ,
+  };
 }

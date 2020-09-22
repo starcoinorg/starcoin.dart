@@ -1,6 +1,7 @@
 part of starcoin_types;
 
 abstract class GeneralMetadata {
+  GeneralMetadata();
 
   void serialize(BinarySerializer serializer);
 
@@ -26,6 +27,16 @@ abstract class GeneralMetadata {
       }
       return value;
   }
+
+  static GeneralMetadata fromJson(Map<String, dynamic> json){
+    final type = json['type'] as int;
+    switch (type) {
+      case 0: return GeneralMetadataGeneralMetadataVersion0Item.loadJson(json);
+      default: throw new Exception("Unknown type for GeneralMetadata: " + type.toString());
+    }
+  }
+
+  Map<String, dynamic> toJson();
 }
 
 
@@ -62,4 +73,12 @@ class GeneralMetadataGeneralMetadataVersion0Item extends GeneralMetadata {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  GeneralMetadataGeneralMetadataVersion0Item.loadJson(Map<String, dynamic> json) :
+    value = GeneralMetadataV0.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 0
+  };
 }

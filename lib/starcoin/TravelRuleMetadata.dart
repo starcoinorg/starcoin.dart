@@ -1,6 +1,7 @@
 part of starcoin_types;
 
 abstract class TravelRuleMetadata {
+  TravelRuleMetadata();
 
   void serialize(BinarySerializer serializer);
 
@@ -26,6 +27,16 @@ abstract class TravelRuleMetadata {
       }
       return value;
   }
+
+  static TravelRuleMetadata fromJson(Map<String, dynamic> json){
+    final type = json['type'] as int;
+    switch (type) {
+      case 0: return TravelRuleMetadataTravelRuleMetadataVersion0Item.loadJson(json);
+      default: throw new Exception("Unknown type for TravelRuleMetadata: " + type.toString());
+    }
+  }
+
+  Map<String, dynamic> toJson();
 }
 
 
@@ -62,4 +73,12 @@ class TravelRuleMetadataTravelRuleMetadataVersion0Item extends TravelRuleMetadat
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  TravelRuleMetadataTravelRuleMetadataVersion0Item.loadJson(Map<String, dynamic> json) :
+    value = TravelRuleMetadataV0.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 0
+  };
 }

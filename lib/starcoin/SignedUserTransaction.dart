@@ -54,4 +54,13 @@ class SignedUserTransaction {
     value = 31 * value + (this.authenticator != null ? this.authenticator.hashCode : 0);
     return value;
   }
+
+  SignedUserTransaction.fromJson(Map<String, dynamic> json) :
+    raw_txn = RawTransaction.fromJson(json['raw_txn']) ,
+    authenticator = TransactionAuthenticator.fromJson(json['authenticator']) ;
+
+  Map<String, dynamic> toJson() => {
+    "raw_txn" : raw_txn ,
+    "authenticator" : authenticator ,
+  };
 }

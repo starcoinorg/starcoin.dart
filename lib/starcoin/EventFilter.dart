@@ -68,4 +68,17 @@ class EventFilter {
     value = 31 * value + (this.limit != null ? this.limit.hashCode : 0);
     return value;
   }
+
+  EventFilter.fromJson(Map<String, dynamic> json) :
+    from_block = json['from_block'] ,
+    to_block = json['to_block'] ,
+    event_keys = List<EventKey>.from(json['event_keys'].map((f) => EventKey.fromJson(f)).toList()) ,
+    limit = json['limit'] ;
+
+  Map<String, dynamic> toJson() => {
+    "from_block" : from_block.isEmpty?null:from_block.value ,
+    "to_block" : to_block.isEmpty?null:to_block.value ,
+    "event_keys" : event_keys ,
+    "limit" : limit.isEmpty?null:limit.value ,
+  };
 }

@@ -47,4 +47,11 @@ class UnstructuredBytesMetadata {
     value = 31 * value + (this.metadata != null ? this.metadata.hashCode : 0);
     return value;
   }
+
+  UnstructuredBytesMetadata.fromJson(Map<String, dynamic> json) :
+    metadata = json['metadata'] ;
+
+  Map<String, dynamic> toJson() => {
+    "metadata" : metadata.isEmpty?null:metadata.value ,
+  };
 }

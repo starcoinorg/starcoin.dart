@@ -96,4 +96,25 @@ class RawTransaction {
     value = 31 * value + (this.chain_id != null ? this.chain_id.hashCode : 0);
     return value;
   }
+
+  RawTransaction.fromJson(Map<String, dynamic> json) :
+    sender = AccountAddress.fromJson(json['sender']) ,
+    sequence_number = json['sequence_number'] ,
+    payload = TransactionPayload.fromJson(json['payload']) ,
+    max_gas_amount = json['max_gas_amount'] ,
+    gas_unit_price = json['gas_unit_price'] ,
+    gas_token_code = json['gas_token_code'] ,
+    expiration_timestamp_secs = json['expiration_timestamp_secs'] ,
+    chain_id = ChainId.fromJson(json['chain_id']) ;
+
+  Map<String, dynamic> toJson() => {
+    "sender" : sender ,
+    "sequence_number" : sequence_number ,
+    "payload" : payload ,
+    "max_gas_amount" : max_gas_amount ,
+    "gas_unit_price" : gas_unit_price ,
+    "gas_token_code" : 'gas_token_code' ,
+    "expiration_timestamp_secs" : expiration_timestamp_secs ,
+    "chain_id" : chain_id ,
+  };
 }

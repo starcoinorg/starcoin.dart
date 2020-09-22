@@ -1,6 +1,7 @@
 part of starcoin_types;
 
 abstract class ContractEvent {
+  ContractEvent();
 
   void serialize(BinarySerializer serializer);
 
@@ -26,6 +27,16 @@ abstract class ContractEvent {
       }
       return value;
   }
+
+  static ContractEvent fromJson(Map<String, dynamic> json){
+    final type = json['type'] as int;
+    switch (type) {
+      case 0: return ContractEventV0Item.loadJson(json);
+      default: throw new Exception("Unknown type for ContractEvent: " + type.toString());
+    }
+  }
+
+  Map<String, dynamic> toJson();
 }
 
 
@@ -62,4 +73,12 @@ class ContractEventV0Item extends ContractEvent {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  ContractEventV0Item.loadJson(Map<String, dynamic> json) :
+    value = ContractEventV0.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 0
+  };
 }

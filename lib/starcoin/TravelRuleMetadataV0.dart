@@ -47,4 +47,11 @@ class TravelRuleMetadataV0 {
     value = 31 * value + (this.off_chain_reference_id != null ? this.off_chain_reference_id.hashCode : 0);
     return value;
   }
+
+  TravelRuleMetadataV0.fromJson(Map<String, dynamic> json) :
+    off_chain_reference_id = json['off_chain_reference_id'] ;
+
+  Map<String, dynamic> toJson() => {
+    "off_chain_reference_id" : off_chain_reference_id.isEmpty?null:off_chain_reference_id.value ,
+  };
 }

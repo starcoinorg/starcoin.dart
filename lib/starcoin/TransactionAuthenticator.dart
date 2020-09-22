@@ -1,6 +1,7 @@
 part of starcoin_types;
 
 abstract class TransactionAuthenticator {
+  TransactionAuthenticator();
 
   void serialize(BinarySerializer serializer);
 
@@ -27,6 +28,17 @@ abstract class TransactionAuthenticator {
       }
       return value;
   }
+
+  static TransactionAuthenticator fromJson(Map<String, dynamic> json){
+    final type = json['type'] as int;
+    switch (type) {
+      case 0: return TransactionAuthenticatorEd25519Item.loadJson(json);
+      case 1: return TransactionAuthenticatorMultiEd25519Item.loadJson(json);
+      default: throw new Exception("Unknown type for TransactionAuthenticator: " + type.toString());
+    }
+  }
+
+  Map<String, dynamic> toJson();
 }
 
 
@@ -70,6 +82,16 @@ class TransactionAuthenticatorEd25519Item extends TransactionAuthenticator {
     value = 31 * value + (this.signature != null ? this.signature.hashCode : 0);
     return value;
   }
+
+  TransactionAuthenticatorEd25519Item.loadJson(Map<String, dynamic> json) :
+    public_key = Ed25519PublicKey.fromJson(json['public_key']) ,
+    signature = Ed25519Signature.fromJson(json['signature']) ;
+
+  Map<String, dynamic> toJson() => {
+    "public_key" : public_key ,
+    "signature" : signature ,
+    "type" : 0
+  };
 }
 
 class TransactionAuthenticatorMultiEd25519Item extends TransactionAuthenticator {
@@ -112,4 +134,14 @@ class TransactionAuthenticatorMultiEd25519Item extends TransactionAuthenticator 
     value = 31 * value + (this.signature != null ? this.signature.hashCode : 0);
     return value;
   }
+
+  TransactionAuthenticatorMultiEd25519Item.loadJson(Map<String, dynamic> json) :
+    public_key = MultiEd25519PublicKey.fromJson(json['public_key']) ,
+    signature = MultiEd25519Signature.fromJson(json['signature']) ;
+
+  Map<String, dynamic> toJson() => {
+    "public_key" : public_key ,
+    "signature" : signature ,
+    "type" : 1
+  };
 }

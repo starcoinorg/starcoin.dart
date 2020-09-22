@@ -68,4 +68,17 @@ class ContractEventV0 {
     value = 31 * value + (this.event_data != null ? this.event_data.hashCode : 0);
     return value;
   }
+
+  ContractEventV0.fromJson(Map<String, dynamic> json) :
+    key = EventKey.fromJson(json['key']) ,
+    sequence_number = json['sequence_number'] ,
+    type_tag = TypeTag.fromJson(json['type_tag']) ,
+    event_data = Bytes.fromJson(json['event_data']) ;
+
+  Map<String, dynamic> toJson() => {
+    "key" : key ,
+    "sequence_number" : sequence_number ,
+    "type_tag" : type_tag ,
+    "event_data" : event_data ,
+  };
 }

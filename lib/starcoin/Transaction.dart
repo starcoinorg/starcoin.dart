@@ -1,6 +1,7 @@
 part of starcoin_types;
 
 abstract class Transaction {
+  Transaction();
 
   void serialize(BinarySerializer serializer);
 
@@ -27,6 +28,17 @@ abstract class Transaction {
       }
       return value;
   }
+
+  static Transaction fromJson(Map<String, dynamic> json){
+    final type = json['type'] as int;
+    switch (type) {
+      case 0: return TransactionUserTransactionItem.loadJson(json);
+      case 1: return TransactionBlockMetadataItem.loadJson(json);
+      default: throw new Exception("Unknown type for Transaction: " + type.toString());
+    }
+  }
+
+  Map<String, dynamic> toJson();
 }
 
 
@@ -63,6 +75,14 @@ class TransactionUserTransactionItem extends Transaction {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  TransactionUserTransactionItem.loadJson(Map<String, dynamic> json) :
+    value = SignedUserTransaction.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 0
+  };
 }
 
 class TransactionBlockMetadataItem extends Transaction {
@@ -98,4 +118,12 @@ class TransactionBlockMetadataItem extends Transaction {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  TransactionBlockMetadataItem.loadJson(Map<String, dynamic> json) :
+    value = BlockMetadata.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 1
+  };
 }

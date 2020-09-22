@@ -47,4 +47,11 @@ class Ed25519PublicKey {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  Ed25519PublicKey.fromJson(Map<String, dynamic> json) :
+    value = Bytes.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+  };
 }

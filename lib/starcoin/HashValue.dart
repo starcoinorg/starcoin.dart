@@ -47,4 +47,11 @@ class HashValue {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  HashValue.fromJson(Map<String, dynamic> json) :
+    value = Bytes.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+  };
 }

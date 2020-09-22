@@ -61,4 +61,15 @@ class GeneralMetadataV0 {
     value = 31 * value + (this.referenced_event != null ? this.referenced_event.hashCode : 0);
     return value;
   }
+
+  GeneralMetadataV0.fromJson(Map<String, dynamic> json) :
+    to_subaddress = json['to_subaddress'] ,
+    from_subaddress = json['from_subaddress'] ,
+    referenced_event = json['referenced_event'] ;
+
+  Map<String, dynamic> toJson() => {
+    "to_subaddress" : to_subaddress.isEmpty?null:to_subaddress.value ,
+    "from_subaddress" : from_subaddress.isEmpty?null:from_subaddress.value ,
+    "referenced_event" : referenced_event.isEmpty?null:referenced_event.value ,
+  };
 }

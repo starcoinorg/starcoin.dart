@@ -1,6 +1,7 @@
 part of starcoin_types;
 
 abstract class WriteOp {
+  WriteOp();
 
   void serialize(BinarySerializer serializer);
 
@@ -27,6 +28,17 @@ abstract class WriteOp {
       }
       return value;
   }
+
+  static WriteOp fromJson(Map<String, dynamic> json){
+    final type = json['type'] as int;
+    switch (type) {
+      case 0: return WriteOpDeletionItem.loadJson(json);
+      case 1: return WriteOpValueItem.loadJson(json);
+      default: throw new Exception("Unknown type for WriteOp: " + type.toString());
+    }
+  }
+
+  Map<String, dynamic> toJson();
 }
 
 
@@ -53,6 +65,12 @@ class WriteOpDeletionItem extends WriteOp {
     int value = 7;
     return value;
   }
+
+  WriteOpDeletionItem.loadJson(Map<String, dynamic> json);
+
+  Map<String, dynamic> toJson() => {
+    "type" : 0
+  };
 }
 
 class WriteOpValueItem extends WriteOp {
@@ -88,4 +106,12 @@ class WriteOpValueItem extends WriteOp {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  WriteOpValueItem.loadJson(Map<String, dynamic> json) :
+    value = Bytes.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 1
+  };
 }

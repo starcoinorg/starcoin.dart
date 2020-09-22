@@ -1,6 +1,7 @@
 part of starcoin_types;
 
 abstract class Metadata {
+  Metadata();
 
   void serialize(BinarySerializer serializer);
 
@@ -29,6 +30,19 @@ abstract class Metadata {
       }
       return value;
   }
+
+  static Metadata fromJson(Map<String, dynamic> json){
+    final type = json['type'] as int;
+    switch (type) {
+      case 0: return MetadataUndefinedItem.loadJson(json);
+      case 1: return MetadataGeneralMetadataItem.loadJson(json);
+      case 2: return MetadataTravelRuleMetadataItem.loadJson(json);
+      case 3: return MetadataUnstructuredBytesMetadataItem.loadJson(json);
+      default: throw new Exception("Unknown type for Metadata: " + type.toString());
+    }
+  }
+
+  Map<String, dynamic> toJson();
 }
 
 
@@ -55,6 +69,12 @@ class MetadataUndefinedItem extends Metadata {
     int value = 7;
     return value;
   }
+
+  MetadataUndefinedItem.loadJson(Map<String, dynamic> json);
+
+  Map<String, dynamic> toJson() => {
+    "type" : 0
+  };
 }
 
 class MetadataGeneralMetadataItem extends Metadata {
@@ -90,6 +110,14 @@ class MetadataGeneralMetadataItem extends Metadata {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  MetadataGeneralMetadataItem.loadJson(Map<String, dynamic> json) :
+    value = GeneralMetadata.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 1
+  };
 }
 
 class MetadataTravelRuleMetadataItem extends Metadata {
@@ -125,6 +153,14 @@ class MetadataTravelRuleMetadataItem extends Metadata {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  MetadataTravelRuleMetadataItem.loadJson(Map<String, dynamic> json) :
+    value = TravelRuleMetadata.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 2
+  };
 }
 
 class MetadataUnstructuredBytesMetadataItem extends Metadata {
@@ -160,4 +196,12 @@ class MetadataUnstructuredBytesMetadataItem extends Metadata {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  MetadataUnstructuredBytesMetadataItem.loadJson(Map<String, dynamic> json) :
+    value = UnstructuredBytesMetadata.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 3
+  };
 }

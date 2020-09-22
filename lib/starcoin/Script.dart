@@ -61,4 +61,15 @@ class Script {
     value = 31 * value + (this.args != null ? this.args.hashCode : 0);
     return value;
   }
+
+  Script.fromJson(Map<String, dynamic> json) :
+    code = Bytes.fromJson(json['code']) ,
+    ty_args = List<TypeTag>.from(json['ty_args'].map((f) => TypeTag.fromJson(f)).toList()) ,
+    args = List<TransactionArgument>.from(json['args'].map((f) => TransactionArgument.fromJson(f)).toList()) ;
+
+  Map<String, dynamic> toJson() => {
+    "code" : code ,
+    "ty_args" : ty_args ,
+    "args" : args ,
+  };
 }

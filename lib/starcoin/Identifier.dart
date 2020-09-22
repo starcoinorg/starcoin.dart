@@ -47,4 +47,11 @@ class Identifier {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  Identifier.fromJson(Map<String, dynamic> json) :
+    value = json['value'] ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : 'value' ,
+  };
 }

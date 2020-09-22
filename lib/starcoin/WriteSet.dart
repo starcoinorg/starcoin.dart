@@ -47,4 +47,11 @@ class WriteSet {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  WriteSet.fromJson(Map<String, dynamic> json) :
+    value = WriteSetMut.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+  };
 }

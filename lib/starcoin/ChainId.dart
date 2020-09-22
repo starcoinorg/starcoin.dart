@@ -47,4 +47,11 @@ class ChainId {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  ChainId.fromJson(Map<String, dynamic> json) :
+    value = json['value'] ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+  };
 }

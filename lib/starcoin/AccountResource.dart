@@ -89,4 +89,23 @@ class AccountResource {
     value = 31 * value + (this.sequence_number != null ? this.sequence_number.hashCode : 0);
     return value;
   }
+
+  AccountResource.fromJson(Map<String, dynamic> json) :
+    authentication_key = Bytes.fromJson(json['authentication_key']) ,
+    withdrawal_capability = json['withdrawal_capability'] ,
+    key_rotation_capability = json['key_rotation_capability'] ,
+    received_events = EventHandle.fromJson(json['received_events']) ,
+    sent_events = EventHandle.fromJson(json['sent_events']) ,
+    accept_token_events = EventHandle.fromJson(json['accept_token_events']) ,
+    sequence_number = json['sequence_number'] ;
+
+  Map<String, dynamic> toJson() => {
+    "authentication_key" : authentication_key ,
+    "withdrawal_capability" : withdrawal_capability.isEmpty?null:withdrawal_capability.value ,
+    "key_rotation_capability" : key_rotation_capability.isEmpty?null:key_rotation_capability.value ,
+    "received_events" : received_events ,
+    "sent_events" : sent_events ,
+    "accept_token_events" : accept_token_events ,
+    "sequence_number" : sequence_number ,
+  };
 }

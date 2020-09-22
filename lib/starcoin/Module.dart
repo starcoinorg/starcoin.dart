@@ -47,4 +47,11 @@ class Module {
     value = 31 * value + (this.code != null ? this.code.hashCode : 0);
     return value;
   }
+
+  Module.fromJson(Map<String, dynamic> json) :
+    code = Bytes.fromJson(json['code']) ;
+
+  Map<String, dynamic> toJson() => {
+    "code" : code ,
+  };
 }

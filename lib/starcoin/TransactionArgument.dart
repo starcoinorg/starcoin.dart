@@ -1,6 +1,7 @@
 part of starcoin_types;
 
 abstract class TransactionArgument {
+  TransactionArgument();
 
   void serialize(BinarySerializer serializer);
 
@@ -31,6 +32,21 @@ abstract class TransactionArgument {
       }
       return value;
   }
+
+  static TransactionArgument fromJson(Map<String, dynamic> json){
+    final type = json['type'] as int;
+    switch (type) {
+      case 0: return TransactionArgumentU8Item.loadJson(json);
+      case 1: return TransactionArgumentU64Item.loadJson(json);
+      case 2: return TransactionArgumentU128Item.loadJson(json);
+      case 3: return TransactionArgumentAddressItem.loadJson(json);
+      case 4: return TransactionArgumentU8VectorItem.loadJson(json);
+      case 5: return TransactionArgumentBoolItem.loadJson(json);
+      default: throw new Exception("Unknown type for TransactionArgument: " + type.toString());
+    }
+  }
+
+  Map<String, dynamic> toJson();
 }
 
 
@@ -67,6 +83,14 @@ class TransactionArgumentU8Item extends TransactionArgument {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  TransactionArgumentU8Item.loadJson(Map<String, dynamic> json) :
+    value = json['value'] ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 0
+  };
 }
 
 class TransactionArgumentU64Item extends TransactionArgument {
@@ -102,6 +126,14 @@ class TransactionArgumentU64Item extends TransactionArgument {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  TransactionArgumentU64Item.loadJson(Map<String, dynamic> json) :
+    value = json['value'] ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 1
+  };
 }
 
 class TransactionArgumentU128Item extends TransactionArgument {
@@ -137,6 +169,14 @@ class TransactionArgumentU128Item extends TransactionArgument {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  TransactionArgumentU128Item.loadJson(Map<String, dynamic> json) :
+    value = json['value'] ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 2
+  };
 }
 
 class TransactionArgumentAddressItem extends TransactionArgument {
@@ -172,6 +212,14 @@ class TransactionArgumentAddressItem extends TransactionArgument {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  TransactionArgumentAddressItem.loadJson(Map<String, dynamic> json) :
+    value = AccountAddress.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 3
+  };
 }
 
 class TransactionArgumentU8VectorItem extends TransactionArgument {
@@ -207,6 +255,14 @@ class TransactionArgumentU8VectorItem extends TransactionArgument {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  TransactionArgumentU8VectorItem.loadJson(Map<String, dynamic> json) :
+    value = Bytes.fromJson(json['value']) ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 4
+  };
 }
 
 class TransactionArgumentBoolItem extends TransactionArgument {
@@ -242,4 +298,12 @@ class TransactionArgumentBoolItem extends TransactionArgument {
     value = 31 * value + (this.value != null ? this.value.hashCode : 0);
     return value;
   }
+
+  TransactionArgumentBoolItem.loadJson(Map<String, dynamic> json) :
+    value = json['value'] ;
+
+  Map<String, dynamic> toJson() => {
+    "value" : value ,
+    "type" : 5
+  };
 }

@@ -47,4 +47,11 @@ class KeyRotationCapabilityResource {
     value = 31 * value + (this.account_address != null ? this.account_address.hashCode : 0);
     return value;
   }
+
+  KeyRotationCapabilityResource.fromJson(Map<String, dynamic> json) :
+    account_address = AccountAddress.fromJson(json['account_address']) ;
+
+  Map<String, dynamic> toJson() => {
+    "account_address" : account_address ,
+  };
 }

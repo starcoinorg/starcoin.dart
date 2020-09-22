@@ -54,4 +54,13 @@ class AccessPath {
     value = 31 * value + (this.path != null ? this.path.hashCode : 0);
     return value;
   }
+
+  AccessPath.fromJson(Map<String, dynamic> json) :
+    address = AccountAddress.fromJson(json['address']) ,
+    path = Bytes.fromJson(json['path']) ;
+
+  Map<String, dynamic> toJson() => {
+    "address" : address ,
+    "path" : path ,
+  };
 }

@@ -82,4 +82,21 @@ class BlockMetadata {
     value = 31 * value + (this.number != null ? this.number.hashCode : 0);
     return value;
   }
+
+  BlockMetadata.fromJson(Map<String, dynamic> json) :
+    parent_hash = HashValue.fromJson(json['parent_hash']) ,
+    timestamp = json['timestamp'] ,
+    author = AccountAddress.fromJson(json['author']) ,
+    auth_key_prefix = Bytes.fromJson(json['auth_key_prefix']) ,
+    uncles = json['uncles'] ,
+    number = json['number'] ;
+
+  Map<String, dynamic> toJson() => {
+    "parent_hash" : parent_hash ,
+    "timestamp" : timestamp ,
+    "author" : author ,
+    "auth_key_prefix" : auth_key_prefix ,
+    "uncles" : uncles ,
+    "number" : number ,
+  };
 }

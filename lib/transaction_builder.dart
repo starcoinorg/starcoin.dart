@@ -1,4 +1,4 @@
-import 'starcoin/starcoin.dart';
+import 'starcoin/starcoin_types.dart';
 import 'serde/serde.dart';
 import 'dart:typed_data';
 
