@@ -44,8 +44,7 @@ class NewBlockFilter extends Filter<dynamic> {
 
   @override
   PubSubCreationParams createPubSub() {
-    return PubSubCreationParams(
-        [Helpers.byteToHex(KindNewHeadsItem().lcsSerialize())]);
+    return PubSubCreationParams([KindNewHeadsItem()]);
   }
 }
 
@@ -62,8 +61,7 @@ class NewMintBlockFilter extends Filter<dynamic> {
 
   @override
   PubSubCreationParams createPubSub() {
-    return PubSubCreationParams(
-        [Helpers.byteToHex(KindNewMintBlockItem().lcsSerialize())]);
+    return PubSubCreationParams([KindNewMintBlockItem()]);
   }
 }
 
@@ -88,11 +86,7 @@ class NewTxnSendRecvEventFilter extends Filter<dynamic> {
     final sendEventKey = account.sendEventKey();
     final eventFilter = EventFilter(Optional.empty(), Optional.empty(),
         [sendEventKey, recvEventKey], Optional.empty());
-    final events = PubSubParamsEventsItem(eventFilter);
-    return PubSubCreationParams([
-      Helpers.byteToHex(KindEventsItem().lcsSerialize()),
-      jsonEncode(events)
-    ]);
+    return PubSubCreationParams([KindEventsItem(), eventFilter]);
   }
 }
 
@@ -151,7 +145,7 @@ class PubSubClient {
 
     try {
       final response =
-          await peer.sendRequest('starcoin_subscribe_hex', params.params);
+          await peer.sendRequest('starcoin_subscribe', params.params);
       filter.id = response.toString();
     } on rpc.RpcException catch (e, s) {
       filter.controller.addError(e, s);
@@ -223,7 +217,7 @@ class PubSubClient {
 
     if (filter.isPubSub && !_clearingBecauseSocketClosed) {
       final connection = _connectWithPeer();
-      await connection.sendRequest('starcoin_unsubscribe_hex', [filter.id]);
+      await connection.sendRequest('starcoin_unsubscribe', [filter.id]);
     } else {
       await _rpc.call('eth_uninstallFilter', [filter.id]);
     }
@@ -246,7 +240,7 @@ class PubSubClient {
 
     _streamRpcPeer = rpc.Peer(connector);
 
-    _streamRpcPeer.registerMethod('starcoin_subscription_hex',
+    _streamRpcPeer.registerMethod('starcoin_subscription',
         (rpc.Parameters params) {
       handlePubSubNotification(params);
     });
