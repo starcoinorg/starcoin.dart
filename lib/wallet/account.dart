@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:typed_data';
 import 'package:starcoin_wallet/serde/serde.dart';
-import 'package:starcoin_wallet/starcoin/starcoin_types.dart';
+import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/wallet/keypair.dart';
 import 'package:starcoin_wallet/wallet/helper.dart';
 import 'package:starcoin_wallet/wallet/hash.dart';
