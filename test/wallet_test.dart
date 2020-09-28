@@ -32,7 +32,7 @@ void main() {
     print(Helpers.byteToHex(account.keyPair.getPrivateKey()));
     var public_key_hex = Helpers.byteToHex(account.keyPair.getPublicKey());
     print("public key is $public_key_hex");
-    expect("7d43d5269ddb89cdb7f7b812689bf135", account.getAddress());
+    expect("0x7d43d5269ddb89cdb7f7b812689bf135", account.getAddress());
 
     var message = Uint8List.fromList([1, 2, 3, 4]);
     var result = account.keyPair.sign(message);

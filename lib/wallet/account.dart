@@ -16,26 +16,20 @@ const SENDSALT = 1;
 const RECVSALT = 0;
 
 class AccountState {
-  Uint8List authenticationKey;
   BigInt balance, sequenceNumber;
-  EventHandle receivedEvents, sentEvents;
-  bool delegatedWithdrawalCapability;
-  bool delegatedKeyRotationCapability;
+  String address;
+  String publicKey;
 
-  AccountState(this.authenticationKey,
-      {BigInt balance,
-      EventHandle receivedEvents,
-      EventHandle sentEvents,
-      BigInt sequenceNumber,
-      this.delegatedWithdrawalCapability = false,
-      this.delegatedKeyRotationCapability = false}) {
+  AccountState({
+    BigInt balance,
+    BigInt sequenceNumber,
+    String address,
+    String publicKey,
+  }) {
     this.balance = balance == null ? BigInt.zero : balance;
-    EventHandle defaultEventHandle =
-        new EventHandle(0, EventKey(Bytes(List())));
-    this.receivedEvents =
-        receivedEvents == null ? defaultEventHandle : receivedEvents;
-    this.sentEvents = sentEvents == null ? defaultEventHandle : sentEvents;
     this.sequenceNumber = sequenceNumber == null ? BigInt.zero : sequenceNumber;
+    this.address = address;
+    this.publicKey = publicKey;
   }
 }
 
@@ -70,10 +64,10 @@ class Account {
 
   String getAddress() {
     if (_address != null && _address.isNotEmpty) {
-      return _address;
+      return "0x" + _address;
     }
     _address = keyPair.getAddress();
-    return _address;
+    return "0x" + _address;
   }
 
   Future<Int128> balanceOfStc() async {

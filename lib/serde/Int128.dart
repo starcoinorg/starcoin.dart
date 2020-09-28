@@ -15,6 +15,13 @@ class Int128 {
     return Int128(high, low);
   }
 
+  BigInt toBigInt() {
+    var result = BigInt.from(high);
+    result = result << 64;
+    result = result + BigInt.from(low);
+    return result;
+  }
+
   @override
   bool operator ==(covariant Int128 other) {
     if (other == null) return false;
