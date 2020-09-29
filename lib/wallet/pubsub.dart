@@ -84,8 +84,9 @@ class NewTxnSendRecvEventFilter extends Filter<dynamic> {
   PubSubCreationParams createPubSub() {
     final recvEventKey = account.recvEventKey();
     final sendEventKey = account.sendEventKey();
-    final eventFilter = EventFilter(Optional.empty(), Optional.empty(),
+    final eventFilter = EventFilter(Optional.of(0), Optional.empty(),
         [sendEventKey, recvEventKey], Optional.empty());
+    //print(jsonEncode([KindEventsItem(), eventFilter]));
     return PubSubCreationParams([KindEventsItem(), eventFilter]);
   }
 }

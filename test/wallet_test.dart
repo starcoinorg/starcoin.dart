@@ -190,15 +190,14 @@ void main() {
     final wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
     final account = wallet.newAccount();
 
-    var subscription = client
-        .addFilter(NewTxnSendRecvEventFilter(account))
-        .take(1)
-        .listen((event) {
-      print(event);
-    });
+    var subscription = client.addFilter(NewTxnSendRecvEventFilter(account));
 
-    await subscription.asFuture();
-    await subscription.cancel();
+    await for (var event in subscription) {
+      print(event);
+      print(await wallet.getTransactionInfo(event['transaction_hash']));
+      print(await wallet.getTransaction(event['transaction_hash']));
+      break;
+    }
   });
 
   test('Hash', () {

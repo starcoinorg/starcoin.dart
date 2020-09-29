@@ -3,6 +3,13 @@ import 'package:starcoin_wallet/wallet/keyfactory.dart';
 import 'package:starcoin_wallet/wallet/client.dart';
 import 'package:http/http.dart';
 
+class TransactionWithInfo {
+  Map<String, dynamic> txn;
+  Map<String, dynamic> txnInfo;
+
+  TransactionWithInfo(this.txn, this.txnInfo);
+}
+
 class Wallet {
   KeyFactory _keyFactory;
   int _lastChild = 0;
@@ -44,6 +51,12 @@ class Wallet {
     final client = StarcoinClient(url, Client());
     final result = await client.makeRPCCall('chain.get_block_by_hash', [hash]);
     return result;
+  }
+
+  Future<dynamic> getTransactionDetail(String hash) async {
+    final txn = await getTransaction(hash);
+    final info = await getTransactionInfo(hash);
+    return TransactionWithInfo(txn, info);
   }
 
   void addAccount(Account account) {
