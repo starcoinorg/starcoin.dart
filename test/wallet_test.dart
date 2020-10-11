@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:optional/optional.dart';
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/serde/serde.dart';
 import 'package:starcoin_wallet/wallet/json_rpc.dart';
@@ -198,6 +201,15 @@ void main() {
       print(await wallet.getTransaction(event['transaction_hash']));
       break;
     }
+  });
+
+  test('events', () async {
+    final wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
+    final account = wallet.newAccount();
+
+    final txnList = await wallet.getTxnList(
+        account, Optional.of(0), Optional.empty(), Optional.empty()) as List;
+    print(txnList[0].toString());
   });
 
   test('Hash', () {

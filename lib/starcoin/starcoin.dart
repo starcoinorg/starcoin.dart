@@ -5,6 +5,7 @@ import 'package:optional/optional.dart';
 import 'package:tuple/tuple.dart';
 import 'package:starcoin_wallet/serde/serde.dart';
 import 'package:starcoin_wallet/lcs/lcs.dart';
+import 'package:hex/hex.dart';
 
 part 'TraitHelpers.dart';
 part 'AccessPath.dart';

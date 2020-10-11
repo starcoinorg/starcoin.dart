@@ -4,41 +4,42 @@ class AccountAddress {
   List<int> value;
 
   AccountAddress(List<int> value) {
-    assert (value != null);
+    assert(value != null);
     this.value = value;
   }
 
-  void serialize(BinarySerializer serializer){
+  void serialize(BinarySerializer serializer) {
     TraitHelpers.serialize_array16_u8_array(value, serializer);
   }
 
   Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
-      serialize(serializer);
-      return serializer.get_bytes();
+    var serializer = new LcsSerializer();
+    serialize(serializer);
+    return serializer.get_bytes();
   }
 
-  static AccountAddress deserialize(BinaryDeserializer deserializer){
+  static AccountAddress deserialize(BinaryDeserializer deserializer) {
     var value = TraitHelpers.deserialize_array16_u8_array(deserializer);
     return new AccountAddress(value);
   }
 
-  static AccountAddress lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
-      AccountAddress value = deserialize(deserializer);
-      if (deserializer.get_buffer_offset() < input.length) {
-           throw new Exception("Some input bytes were not read");
-      }
-      return value;
+  static AccountAddress lcsDeserialize(Uint8List input) {
+    var deserializer = new LcsDeserializer(input);
+    AccountAddress value = deserialize(deserializer);
+    if (deserializer.get_buffer_offset() < input.length) {
+      throw new Exception("Some input bytes were not read");
+    }
+    return value;
   }
 
   @override
   bool operator ==(covariant AccountAddress other) {
     if (other == null) return false;
 
-    if (  isListsEqual(this.value , other.value)  ){
-    return true;}
-    else return false;
+    if (isListsEqual(this.value, other.value)) {
+      return true;
+    } else
+      return false;
   }
 
   @override
@@ -48,10 +49,9 @@ class AccountAddress {
     return value;
   }
 
-  AccountAddress.fromJson(Map<String, dynamic> json) :
-    value = List<int>.from(json['value']) ;
+  AccountAddress.fromJson(String json) : value = HEX.decode(json);
 
   Map<String, dynamic> toJson() => {
-    "value" : value ,
-  };
+        "value": HEX.encode(value),
+      };
 }
