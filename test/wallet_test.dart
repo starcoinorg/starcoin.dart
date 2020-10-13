@@ -1,12 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:optional/optional.dart';
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/serde/serde.dart';
 import 'package:starcoin_wallet/wallet/json_rpc.dart';
 
-import 'package:starcoin_wallet/wallet/wallet.dart';
+import 'package:starcoin_wallet/wallet/account_manager.dart';
+import 'package:starcoin_wallet/wallet/wallet_client.dart';
 import 'package:starcoin_wallet/wallet/account.dart';
 import 'package:starcoin_wallet/wallet/helper.dart';
 import 'package:starcoin_wallet/transaction_builder.dart';
@@ -161,6 +160,7 @@ void main() {
 
   test('Account', () async {
     Wallet wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
+    final walletClient = new WalletClient(URL);
     Account account = wallet.newAccount();
     Account reciever = wallet.newAccount();
 
@@ -176,12 +176,12 @@ void main() {
     await Future.delayed(Duration(seconds: 5));
 
     if (result.result == true) {
-      final txn = await wallet.getTransaction(result.txnHash);
+      final txn = await walletClient.getTransaction(result.txnHash);
       print("txn is $txn");
     }
 
     if (result.result == true) {
-      final txn = await wallet.getTransactionInfo(result.txnHash);
+      final txn = await walletClient.getTransactionInfo(result.txnHash);
       print("txn_info is $txn");
     }
   });
@@ -190,26 +190,29 @@ void main() {
     var socket = IOWebSocketChannel.connect(Uri.parse('ws://127.0.0.1:9870'));
     var rpc = JsonRPC("http://127.0.0.1:9850", http.Client());
     var client = PubSubClient(socket.cast<String>(), rpc);
-    final wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
+    final walletClient = new WalletClient(URL);
+    final wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
     final account = wallet.newAccount();
 
     var subscription = client.addFilter(NewTxnSendRecvEventFilter(account));
 
     await for (var event in subscription) {
       print(event);
-      print(await wallet.getTransactionInfo(event['transaction_hash']));
-      print(await wallet.getTransaction(event['transaction_hash']));
+      print(await walletClient.getTransactionInfo(event['transaction_hash']));
+      print(await walletClient.getTransaction(event['transaction_hash']));
       break;
     }
   });
 
   test('events', () async {
     final wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
+    final walletClient = new WalletClient(URL);
     final account = wallet.newAccount();
 
-    final txnList = await wallet.getTxnList(
-        account, Optional.of(0), Optional.empty(), Optional.empty()) as List;
-    print(txnList[0].toString());
+    final txnList = await walletClient.getTxnList(
+        account, Optional.of(0), Optional.empty(), Optional.empty());
+    print(txnList[0].txn);
+    print(txnList[0].txnInfo);
   });
 
   test('Hash', () {

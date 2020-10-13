@@ -1,47 +1,27 @@
-import 'dart:convert';
-
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/wallet/account.dart';
-import 'package:starcoin_wallet/wallet/keyfactory.dart';
 import 'package:starcoin_wallet/wallet/client.dart';
 import 'package:http/http.dart';
 import 'package:optional/optional.dart';
 
+enum PaymentType {
+  Send,
+  Recieve,
+}
+
 class TransactionWithInfo {
   final Map<String, dynamic> txn;
   final Map<String, dynamic> txnInfo;
+  PaymentType paymentType;
+  Map<String, dynamic> event;
 
   TransactionWithInfo(this.txn, this.txnInfo);
-
-  @override
-  String toString() {
-    "txn is " + jsonEncode(txn) + " txn_info is " + jsonEncode(txnInfo);
-  }
 }
 
-class Wallet {
-  KeyFactory _keyFactory;
-  int _lastChild = 0;
-  Map _accounts = new Map();
-  String url;
+class WalletClient {
+  final String url;
 
-  Wallet({String mnemonic, String url, String salt = 'starcoin'}) {
-    _keyFactory = new KeyFactory(salt, mnemonic: mnemonic);
-    this.url = url;
-  }
-
-  Account newAccount() {
-    Account newAccount = generateAccount(_lastChild);
-    _lastChild++;
-    return newAccount;
-  }
-
-  Account generateAccount(int depth) {
-    assert(depth >= 0);
-    Account account = new Account(_keyFactory.generateKey(depth), url);
-    addAccount(account);
-    return account;
-  }
+  WalletClient(this.url);
 
   Future<dynamic> getTransaction(String hash) async {
     final client = StarcoinClient(url, Client());
@@ -96,13 +76,14 @@ class Wallet {
     for (int i = 0; i < events.length; i++) {
       final txnHash = events[i]['transaction_hash'];
       var txnWithInfo = await getTransactionDetail(txnHash);
+      txnWithInfo.event = events[i];
+      if (events[i]['type_tags']['Struct']['name'] == 'ReceivedPaymentEvent') {
+        txnWithInfo.paymentType = PaymentType.Recieve;
+      } else {
+        txnWithInfo.paymentType = PaymentType.Send;
+      }
       txnList[i] = txnWithInfo;
     }
     return txnList;
-  }
-
-  void addAccount(Account account) {
-    String address = account.keyPair.getAddress();
-    _accounts[address] = account;
   }
 }
