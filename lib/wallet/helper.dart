@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:hex/hex.dart';
+import 'package:sha3/sha3.dart';
 
 class Helpers {
   static List<String> hexArray = '0123456789ABCDEF'.split('');
@@ -151,5 +152,21 @@ class Helpers {
       hex += Helpers.byteToHex(v);
     });
     return Helpers.hexToBytes(hex);
+  }
+
+  static Uint8List publicKeyIntoAddress(Uint8List publicKey) {
+    List<int> key = new List();
+    key.addAll(publicKey);
+    key.add(0);
+
+    var k = SHA3(256, SHA3_PADDING, 256);
+    k.update(key);
+    var hash = k.digest();
+    return Uint8List.fromList(hash.sublist(16, 32));
+  }
+
+  static String publicKeyIntoAddressHex(String publicKeyHex) {
+    final publicKey = hexToBytes(publicKeyHex.replaceFirst("0x", ""));
+    return byteToHex(publicKeyIntoAddress(publicKey));
   }
 }
