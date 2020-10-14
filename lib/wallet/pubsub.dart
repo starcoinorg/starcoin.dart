@@ -1,12 +1,9 @@
-import 'dart:convert';
-
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/wallet/account.dart';
 import 'package:starcoin_wallet/wallet/json_rpc.dart';
 import 'package:json_rpc_2/json_rpc_2.dart' as rpc;
 import 'dart:async';
 import 'package:stream_channel/stream_channel.dart';
-import 'package:starcoin_wallet/wallet/helper.dart';
 import 'dart:developer';
 import 'package:optional/optional.dart';
 

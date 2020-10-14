@@ -3,6 +3,7 @@ import 'package:starcoin_wallet/wallet/account.dart';
 import 'package:starcoin_wallet/wallet/client.dart';
 import 'package:http/http.dart';
 import 'package:optional/optional.dart';
+import 'package:web_socket_channel/io.dart';
 
 enum PaymentType {
   Send,
@@ -76,6 +77,58 @@ class WalletClient {
     for (int i = 0; i < events.length; i++) {
       final txnHash = events[i]['transaction_hash'];
       var txnWithInfo = await getTransactionDetail(txnHash);
+      txnWithInfo.event = events[i];
+      if (events[i]['type_tags']['Struct']['name'] == 'ReceivedPaymentEvent') {
+        txnWithInfo.paymentType = PaymentType.Recieve;
+      } else {
+        txnWithInfo.paymentType = PaymentType.Send;
+      }
+      txnList[i] = txnWithInfo;
+    }
+    return txnList;
+  }
+}
+
+class BatchClient {
+  final String wsURL;
+  ClientController clientController;
+
+  BatchClient(this.wsURL) {
+    clientController = ClientController(
+        IOWebSocketChannel.connect(Uri.parse(this.wsURL)).cast<String>());
+  }
+
+  Future<dynamic> getTransactions(List<String> hashList) async {
+    final result =
+        await clientController.batchCall('chain.get_transaction', hashList);
+    return result;
+  }
+
+  Future<dynamic> getTransactionsInfo(List<String> hashList) async {
+    final result = await clientController.batchCall(
+        'chain.get_transaction_info', hashList);
+    return result;
+  }
+
+  Future<List<TransactionWithInfo>> getTxnListBatch(
+      WalletClient client,
+      Account account,
+      Optional<int> fromBlockNumber,
+      Optional<int> toBlockNumber,
+      Optional<int> limit) async {
+    final events = await client.getTxnEvents(
+        account, fromBlockNumber, toBlockNumber, limit) as List;
+
+    List<String> hashList = new List(events.length);
+    for (int i = 0; i < events.length; i++) {
+      hashList[i] = events[i]['transaction_hash'];
+    }
+    final txns = await getTransactions(hashList);
+    final txnsInfo = await getTransactionsInfo(hashList);
+    List<TransactionWithInfo> txnList = new List(events.length);
+    for (int i = 0; i < events.length; i++) {
+      final txnHash = events[i]['transaction_hash'];
+      var txnWithInfo = TransactionWithInfo(txns[txnHash], txnsInfo[txnHash]);
       txnWithInfo.event = events[i];
       if (events[i]['type_tags']['Struct']['name'] == 'ReceivedPaymentEvent') {
         txnWithInfo.paymentType = PaymentType.Recieve;

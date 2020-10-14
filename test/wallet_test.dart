@@ -213,6 +213,12 @@ void main() {
         account, Optional.of(0), Optional.empty(), Optional.empty());
     print(txnList[0].txn);
     print(txnList[0].txnInfo);
+
+    final batchClient = new BatchClient('ws://127.0.0.1:9870');
+    final txnList2 = await batchClient.getTxnListBatch(walletClient, account,
+        Optional.of(0), Optional.empty(), Optional.empty());
+    print(txnList2[0].txn);
+    print(txnList2[0].txnInfo);
   });
 
   test('Hash', () {
