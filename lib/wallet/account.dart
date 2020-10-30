@@ -135,7 +135,6 @@ class Account {
     RawTransaction rawTxn = RawTransaction(sender, seq, payload, 20000, 1,
         "0x1::STC::STC", nodeInfoResult['now'] + 40000, ChainId(254));
 
-    print("raw txn is $rawTxn");
     var rawTxnBytes = rawTxn.lcsSerialize();
 
     //print("raw_txn_bytes is $raw_txn_bytes");
