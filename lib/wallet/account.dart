@@ -79,7 +79,7 @@ class Account {
   }
 
   Future<Int128> balanceOf(StructTag tokenType) async {
-    final struct_tag = StructTag(
+    final structTag = StructTag(
         AccountAddress(Helpers.hexToBytes("00000000000000000000000000000001")),
         Identifier("Account"),
         Identifier("Balance"),
@@ -87,7 +87,7 @@ class Account {
     final path = List<int>();
     path.add(RESOURCE_TAG);
 
-    final hash = lcsHash(struct_tag.lcsSerialize(), "LIBRA::StructTag");
+    final hash = lcsHash(structTag.lcsSerialize(), "LIBRA::StructTag");
     path.addAll(hash);
 
     final result = await getState(Uint8List.fromList(path));
@@ -121,60 +121,42 @@ class Account {
     return listInt;
   }
 
-  Future<SubmitTransactionResult> transferSTC(
-    Int128 amount,
-    AccountAddress reciever,
-    Bytes publicKey,
-  ) async {
+  Future<SubmitTransactionResult> sendTransaction(
+      TransactionPayload payload) async {
     AccountAddress sender = AccountAddress(this.keyPair.getAddressBytes());
     final client = StarcoinClient(url, Client());
 
-    final node_info_result = await client.makeRPCCall('node.info');
-    if (node_info_result is Error || node_info_result is Exception)
-      throw node_info_result;
-
-    final struct_tag = StructTag(
-        AccountAddress(Helpers.hexToBytes("00000000000000000000000000000001")),
-        Identifier("STC"),
-        Identifier("STC"),
-        List());
-
-    var transfer_script = TransactionBuilder.encode_peer_to_peer_script(
-        TypeTagStructItem(struct_tag), reciever, publicKey, amount);
+    final nodeInfoResult = await client.makeRPCCall('node.info');
+    if (nodeInfoResult is Error || nodeInfoResult is Exception)
+      throw nodeInfoResult;
 
     final seq = await getSeq();
-    RawTransaction raw_txn = RawTransaction(
-        sender,
-        seq,
-        TransactionPayloadScriptItem(transfer_script),
-        20000,
-        1,
-        "0x1::STC::STC",
-        node_info_result['now'] + 40000,
-        ChainId(254));
 
-    var raw_txn_bytes = raw_txn.lcsSerialize();
+    RawTransaction rawTxn = RawTransaction(sender, seq, payload, 20000, 1,
+        "0x1::STC::STC", nodeInfoResult['now'] + 40000, ChainId(254));
+
+    print("raw txn is $rawTxn");
+    var rawTxnBytes = rawTxn.lcsSerialize();
 
     //print("raw_txn_bytes is $raw_txn_bytes");
 
-    var sign_bytes = this
-        .keyPair
-        .sign(cryptHash(raw_txn_bytes, "LIBRA::RawUserTransaction"));
+    var signBytes =
+        this.keyPair.sign(cryptHash(rawTxnBytes, "LIBRA::RawUserTransaction"));
 
-    Ed25519PublicKey pub_key =
+    Ed25519PublicKey pubKey =
         Ed25519PublicKey(Bytes(this.keyPair.getPublicKey()));
-    Ed25519Signature sign = Ed25519Signature(Bytes(sign_bytes));
+    Ed25519Signature sign = Ed25519Signature(Bytes(signBytes));
 
     TransactionAuthenticatorEd25519Item author =
-        TransactionAuthenticatorEd25519Item(pub_key, sign);
+        TransactionAuthenticatorEd25519Item(pubKey, sign);
 
-    SignedUserTransaction signed_txn = SignedUserTransaction(raw_txn, author);
+    SignedUserTransaction signedTxn = SignedUserTransaction(rawTxn, author);
 
     final txnHash = Helpers.byteToHex(
-        lcsHash(signed_txn.lcsSerialize(), "LIBRA::SignedUserTransaction"));
+        lcsHash(signedTxn.lcsSerialize(), "LIBRA::SignedUserTransaction"));
 
     final result = await client.makeRPCCall('txpool.submit_hex_transaction',
-        [Helpers.byteToHex(signed_txn.lcsSerialize())]);
+        [Helpers.byteToHex(signedTxn.lcsSerialize())]);
 
     if (result['Ok'] == null) {
       return SubmitTransactionResult(true, txnHash);
@@ -184,12 +166,29 @@ class Account {
     }
   }
 
+  Future<SubmitTransactionResult> transferSTC(
+    Int128 amount,
+    AccountAddress reciever,
+    Bytes publicKey,
+  ) async {
+    final structTag = StructTag(
+        AccountAddress(Helpers.hexToBytes("00000000000000000000000000000001")),
+        Identifier("STC"),
+        Identifier("STC"),
+        List());
+
+    var transferScript = TransactionBuilder.encode_peer_to_peer_script(
+        TypeTagStructItem(structTag), reciever, publicKey, amount);
+
+    return await sendTransaction(TransactionPayloadScriptItem(transferScript));
+  }
+
   Future<int> getSeq() async {
     final client = StarcoinClient(url, Client());
 
     AccountAddress sender = AccountAddress(this.keyPair.getAddressBytes());
 
-    var struct_tag = StructTag(
+    var structTag = StructTag(
         AccountAddress(Helpers.hexToBytes("00000000000000000000000000000001")),
         Identifier("Account"),
         Identifier("Account"),
@@ -197,7 +196,7 @@ class Account {
     List<int> path = List();
     path.add(RESOURCE_TAG);
 
-    var hash = lcsHash(struct_tag.lcsSerialize(), "LIBRA::StructTag");
+    var hash = lcsHash(structTag.lcsSerialize(), "LIBRA::StructTag");
     path.addAll(hash);
 
     AccessPath accessPath = AccessPath(sender, Bytes(Uint8List.fromList(path)));
@@ -207,11 +206,11 @@ class Account {
     if (result == null) {
       return 0;
     }
-    var list_int = List<int>();
+    var listInt = List<int>();
     for (var i in result) {
-      list_int.add(i);
+      listInt.add(i);
     }
-    var resource = AccountResource.lcsDeserialize(Uint8List.fromList(list_int));
+    var resource = AccountResource.lcsDeserialize(Uint8List.fromList(listInt));
     return resource.sequence_number;
   }
 
