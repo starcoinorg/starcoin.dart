@@ -5,15 +5,15 @@ import 'package:http/http.dart';
 import 'package:optional/optional.dart';
 import 'package:web_socket_channel/io.dart';
 
-enum PaymentType {
-  Send,
-  Recieve,
+enum EventType {
+  Deposit,
+  WithDraw,
 }
 
 class TransactionWithInfo {
   final Map<String, dynamic> txn;
   final Map<String, dynamic> txnInfo;
-  PaymentType paymentType;
+  EventType paymentType;
   Map<String, dynamic> event;
 
   TransactionWithInfo(this.txn, this.txnInfo);
@@ -78,10 +78,10 @@ class WalletClient {
       final txnHash = events[i]['transaction_hash'];
       var txnWithInfo = await getTransactionDetail(txnHash);
       txnWithInfo.event = events[i];
-      if (events[i]['type_tags']['Struct']['name'] == 'ReceivedPaymentEvent') {
-        txnWithInfo.paymentType = PaymentType.Recieve;
+      if (events[i]['type_tags']['Struct']['name'] == 'DepositEvent') {
+        txnWithInfo.paymentType = EventType.Deposit;
       } else {
-        txnWithInfo.paymentType = PaymentType.Send;
+        txnWithInfo.paymentType = EventType.WithDraw;
       }
       txnList[i] = txnWithInfo;
     }
@@ -130,10 +130,11 @@ class BatchClient {
       final txnHash = events[i]['transaction_hash'];
       var txnWithInfo = TransactionWithInfo(txns[txnHash], txnsInfo[txnHash]);
       txnWithInfo.event = events[i];
-      if (events[i]['type_tags']['Struct']['name'] == 'ReceivedPaymentEvent') {
-        txnWithInfo.paymentType = PaymentType.Recieve;
+      print(events[i]);
+      if (events[i]['type_tags']['Struct']['name'] == 'DepositEvent') {
+        txnWithInfo.paymentType = EventType.Deposit;
       } else {
-        txnWithInfo.paymentType = PaymentType.Send;
+        txnWithInfo.paymentType = EventType.WithDraw;
       }
       txnList[i] = txnWithInfo;
     }

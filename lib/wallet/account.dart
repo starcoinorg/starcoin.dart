@@ -12,8 +12,8 @@ import 'package:http/http.dart';
 
 const RESOURCE_TAG = 1;
 
-const SENDSALT = 1;
-const RECVSALT = 0;
+const SENDSALT = 0;
+const RECVSALT = 1;
 
 class AccountState {
   BigInt balance, sequenceNumber;

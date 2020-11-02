@@ -52,3 +52,14 @@ class KeyPair {
     return ed25519_dart.verifySignature(signature, message, getPublicKey());
   }
 }
+
+Uint8List getAuthKey(Uint8List publicKey) {
+  List<int> key = new List();
+  key.addAll(publicKey);
+  key.add(0);
+
+  var k = SHA3(256, SHA3_PADDING, 256);
+  k.update(key);
+  var hash = k.digest();
+  return Uint8List.fromList(hash);
+}
