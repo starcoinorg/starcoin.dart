@@ -130,7 +130,6 @@ class BatchClient {
       final txnHash = events[i]['transaction_hash'];
       var txnWithInfo = TransactionWithInfo(txns[txnHash], txnsInfo[txnHash]);
       txnWithInfo.event = events[i];
-      print(events[i]);
       if (events[i]['type_tags']['Struct']['name'] == 'DepositEvent') {
         txnWithInfo.paymentType = EventType.Deposit;
       } else {
