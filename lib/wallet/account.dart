@@ -133,7 +133,7 @@ class Account {
     final seq = await getSeq();
 
     RawTransaction rawTxn = RawTransaction(sender, seq, payload, 20000, 1,
-        "0x1::STC::STC", nodeInfoResult['now'] + 40000, ChainId(254));
+        "0x1::STC::STC", nodeInfoResult['now_seconds'] + 40000, ChainId(254));
 
     var rawTxnBytes = rawTxn.lcsSerialize();
 
