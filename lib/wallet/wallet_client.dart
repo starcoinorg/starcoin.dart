@@ -24,6 +24,12 @@ class WalletClient {
 
   WalletClient(this.url);
 
+  Future<dynamic> getNodeInfo() async {
+    final client = StarcoinClient(url, Client());
+    final result = await client.makeRPCCall('node.info');
+    return result;
+  }
+
   Future<dynamic> getTransaction(String hash) async {
     final client = StarcoinClient(url, Client());
     final result = await client.makeRPCCall('chain.get_transaction', [hash]);
