@@ -134,7 +134,7 @@ void main() {
         20000,
         1,
         "0x1::STC::STC",
-        node_info['now'] + 40000,
+        node_info['now_seconds'] + 40000,
         ChainId(254));
 
     var raw_txn_bytes = raw_txn.lcsSerialize();
@@ -164,10 +164,11 @@ void main() {
     Account account = wallet.newAccount();
     Account reciever = wallet.newAccount();
 
-    final balance = await account.balanceOfStc();
+    final balance = await account.balanceOfStc(URL);
     print("balance is " + balance.low.toString());
 
     final result = await account.transferSTC(
+        URL,
         Int128(0, 200),
         AccountAddress(reciever.keyPair.getAddressBytes()),
         Bytes(reciever.keyPair.getPublicKey()));

@@ -20,7 +20,7 @@ class Wallet {
 
   Account generateAccount(int depth) {
     assert(depth >= 0);
-    Account account = new Account(_keyFactory.generateKey(depth), url);
+    Account account = new Account(_keyFactory.generateKey(depth));
     addAccount(account);
     return account;
   }

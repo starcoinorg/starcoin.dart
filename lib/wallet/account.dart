@@ -51,15 +51,13 @@ class SubmitTransactionResult {
 class Account {
   KeyPair keyPair;
   String _address;
-  String url;
 
-  Account(KeyPair keyPair, String Url) {
+  Account(KeyPair keyPair) {
     this.keyPair = keyPair;
-    this.url = Url;
   }
 
-  static Account fromPrivateKey(Uint8List privateKey, String url) {
-    return new Account(new KeyPair(privateKey), url);
+  static Account fromPrivateKey(Uint8List privateKey) {
+    return new Account(new KeyPair(privateKey));
   }
 
   String getAddress() {
@@ -70,15 +68,18 @@ class Account {
     return "0x" + _address;
   }
 
-  Future<Int128> balanceOfStc() async {
-    return await balanceOf(StructTag(
-        AccountAddress(Helpers.hexToBytes("00000000000000000000000000000001")),
-        Identifier("STC"),
-        Identifier("STC"),
-        List()));
+  Future<Int128> balanceOfStc(String url) async {
+    return await balanceOf(
+        url,
+        StructTag(
+            AccountAddress(
+                Helpers.hexToBytes("00000000000000000000000000000001")),
+            Identifier("STC"),
+            Identifier("STC"),
+            List()));
   }
 
-  Future<Int128> balanceOf(StructTag tokenType) async {
+  Future<Int128> balanceOf(String url, StructTag tokenType) async {
     final structTag = StructTag(
         AccountAddress(Helpers.hexToBytes("00000000000000000000000000000001")),
         Identifier("Account"),
@@ -90,7 +91,7 @@ class Account {
     final hash = lcsHash(structTag.lcsSerialize(), "LIBRA::StructTag");
     path.addAll(hash);
 
-    final result = await getState(Uint8List.fromList(path));
+    final result = await getState(url, Uint8List.fromList(path));
 
     if (result == null) {
       return Int128(0, 0);
@@ -100,7 +101,7 @@ class Account {
     return balanceResource.token;
   }
 
-  Future<List<int>> getState(Uint8List path) async {
+  Future<List<int>> getState(String url, Uint8List path) async {
     final jsonRpc = StarcoinClient(url, Client());
 
     final sender = AccountAddress(this.keyPair.getAddressBytes());
@@ -122,7 +123,7 @@ class Account {
   }
 
   Future<SubmitTransactionResult> sendTransaction(
-      TransactionPayload payload) async {
+      String url, TransactionPayload payload) async {
     AccountAddress sender = AccountAddress(this.keyPair.getAddressBytes());
     final client = StarcoinClient(url, Client());
 
@@ -130,7 +131,7 @@ class Account {
     if (nodeInfoResult is Error || nodeInfoResult is Exception)
       throw nodeInfoResult;
 
-    final seq = await getSeq();
+    final seq = await getSeq(url);
 
     RawTransaction rawTxn = RawTransaction(sender, seq, payload, 20000, 1,
         "0x1::STC::STC", nodeInfoResult['now_seconds'] + 40000, ChainId(254));
@@ -166,6 +167,7 @@ class Account {
   }
 
   Future<SubmitTransactionResult> transferSTC(
+    String url,
     Int128 amount,
     AccountAddress reciever,
     Bytes publicKey,
@@ -179,10 +181,11 @@ class Account {
     var transferScript = TransactionBuilder.encode_peer_to_peer_script(
         TypeTagStructItem(structTag), reciever, publicKey, amount);
 
-    return await sendTransaction(TransactionPayloadScriptItem(transferScript));
+    return await sendTransaction(
+        url, TransactionPayloadScriptItem(transferScript));
   }
 
-  Future<int> getSeq() async {
+  Future<int> getSeq(String url) async {
     final client = StarcoinClient(url, Client());
 
     AccountAddress sender = AccountAddress(this.keyPair.getAddressBytes());
