@@ -5,11 +5,9 @@ class Wallet {
   KeyFactory _keyFactory;
   int _lastChild = 0;
   Map _accounts = new Map();
-  String url;
 
-  Wallet({String mnemonic, String url, String salt = 'starcoin'}) {
+  Wallet({String mnemonic, String salt = 'starcoin'}) {
     _keyFactory = new KeyFactory(salt, mnemonic: mnemonic);
-    this.url = url;
   }
 
   Account newAccount() {

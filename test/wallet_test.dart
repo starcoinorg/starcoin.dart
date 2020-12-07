@@ -29,7 +29,7 @@ const URL = "http://127.0.0.1:9850";
 
 void main() {
   test('wallet test', () {
-    Wallet wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
+    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
     Account account = wallet.newAccount();
     print(Helpers.byteToHex(account.keyPair.getPrivateKey()));
     var public_key_hex = Helpers.byteToHex(account.keyPair.getPublicKey());
@@ -55,7 +55,7 @@ void main() {
     //var txpool_state = await client.sendRequest('txpool.state');
     //print('txpool state is $txpool_state');
 
-    Wallet wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
+    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
     Account account = wallet.newAccount();
     AccountAddress sender = AccountAddress(account.keyPair.getAddressBytes());
 
@@ -159,7 +159,7 @@ void main() {
   });
 
   test('Account', () async {
-    Wallet wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
+    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
     final walletClient = new WalletClient(URL);
     Account account = wallet.newAccount();
     Account reciever = wallet.newAccount();
@@ -206,7 +206,7 @@ void main() {
   });
 
   test('events', () async {
-    final wallet = new Wallet(mnemonic: mnemonic, url: URL, salt: 'LIBRA');
+    final wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
     final walletClient = new WalletClient(URL);
     final account = wallet.newAccount();
 
