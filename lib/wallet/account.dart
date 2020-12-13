@@ -9,6 +9,7 @@ import 'package:starcoin_wallet/transaction_builder.dart';
 import 'package:starcoin_wallet/wallet/client.dart';
 
 import 'package:http/http.dart';
+import 'package:starcoin_wallet/wallet/wallet_client.dart';
 
 const RESOURCE_TAG = 1;
 
@@ -102,24 +103,10 @@ class Account {
   }
 
   Future<List<int>> getState(String url, Uint8List path) async {
-    final jsonRpc = StarcoinClient(url, Client());
+    final client = WalletClient(url);
 
     final sender = AccountAddress(this.keyPair.getAddressBytes());
-    final accessPath = AccessPath(sender, Bytes(Uint8List.fromList(path)));
-
-    final result = await jsonRpc.makeRPCCall(
-        'state_hex.get', [Helpers.byteToHex(accessPath.lcsSerialize())]);
-
-    if (result == null) {
-      return null;
-    }
-
-    final listInt = List<int>();
-    for (var i in result) {
-      listInt.add(i);
-    }
-
-    return listInt;
+    return await client.getState(sender, path);
   }
 
   Future<SubmitTransactionResult> sendTransaction(

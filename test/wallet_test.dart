@@ -5,6 +5,7 @@ import 'package:starcoin_wallet/serde/serde.dart';
 import 'package:starcoin_wallet/wallet/json_rpc.dart';
 
 import 'package:starcoin_wallet/wallet/account_manager.dart';
+import 'package:starcoin_wallet/wallet/node.dart';
 import 'package:starcoin_wallet/wallet/wallet_client.dart';
 import 'package:starcoin_wallet/wallet/account.dart';
 import 'package:starcoin_wallet/wallet/helper.dart';
@@ -203,6 +204,17 @@ void main() {
       print(await walletClient.getTransaction(event['transaction_hash']));
       break;
     }
+  });
+
+  test('node', () async {
+    final node = Node("http://127.0.0.1:9850");
+    final result = await node.defaultAccount();
+    print(result);
+
+    final address =
+        AccountAddress.fromJson(result['address'].replaceAll("0x", ""));
+    final balance = await node.balanceOfStc(address);
+    print(balance.toBigInt());
   });
 
   test('events', () async {

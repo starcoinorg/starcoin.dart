@@ -5,8 +5,11 @@ import 'package:sha3/sha3.dart';
 
 class KeyPair {
   Uint8List _privateKey;
+  Uint8List _publicKey;
 
-  KeyPair(this._privateKey);
+  KeyPair(this._privateKey) {
+    _publicKey = ed25519_dart.publicKey(_privateKey);
+  }
 
   String getAddress() {
     var address_bytes = Uint8List.fromList(getAddressBytes());
@@ -14,9 +17,9 @@ class KeyPair {
   }
 
   List<int> getAddressBytes() {
-    Uint8List publicKey = ed25519_dart.publicKey(_privateKey);
+    //Uint8List publicKey = ed25519_dart.publicKey(_privateKey);
     List<int> key = new List();
-    key.addAll(publicKey);
+    key.addAll(_publicKey);
     key.add(0);
 
     var k = SHA3(256, SHA3_PADDING, 256);
@@ -26,11 +29,16 @@ class KeyPair {
   }
 
   Uint8List getPublicKey() {
-    return ed25519_dart.publicKey(_privateKey);
+    return _publicKey;
+    //return ed25519_dart.publicKey(_privateKey);
   }
 
   String getPublicKeyHex() {
     return Helpers.byteToHex(getPublicKey());
+  }
+
+  String getPrivateKeyHex() {
+    return Helpers.byteToHex(getPrivateKey());
   }
 
   Uint8List getPrivateKey() {
@@ -44,13 +52,21 @@ class KeyPair {
     //k.update(Helpers.concat([salt, rawData]));
     //var hash = k.digest();
 
-    return ed25519_dart.sign(
-        rawData, _privateKey, ed25519_dart.publicKey(_privateKey));
+    return ed25519_dart.sign(rawData, _privateKey, getPublicKey());
   }
 
   bool verify(Uint8List signature, Uint8List message) {
     return ed25519_dart.verifySignature(signature, message, getPublicKey());
   }
+
+  KeyPair.fromJson(Map<String, dynamic> json)
+      : _privateKey = Helpers.hexToBytes(json['private_key']),
+        _publicKey = Helpers.hexToBytes(json['public_key']);
+
+  Map<String, dynamic> toJson() => {
+        "private_key": getPrivateKeyHex(),
+        "public_key": getPublicKeyHex(),
+      };
 }
 
 Uint8List getAuthKey(Uint8List publicKey) {

@@ -1,8 +1,12 @@
+import 'dart:typed_data';
+
+import 'package:starcoin_wallet/serde/serde.dart';
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/wallet/account.dart';
 import 'package:starcoin_wallet/wallet/client.dart';
 import 'package:http/http.dart';
 import 'package:optional/optional.dart';
+import 'package:starcoin_wallet/wallet/helper.dart';
 import 'package:web_socket_channel/io.dart';
 
 enum EventType {
@@ -92,6 +96,26 @@ class WalletClient {
       txnList[i] = txnWithInfo;
     }
     return txnList;
+  }
+
+  Future<List<int>> getState(AccountAddress sender, Uint8List path) async {
+    final jsonRpc = StarcoinClient(url, Client());
+
+    final accessPath = AccessPath(sender, Bytes(Uint8List.fromList(path)));
+
+    final result = await jsonRpc.makeRPCCall(
+        'state_hex.get', [Helpers.byteToHex(accessPath.lcsSerialize())]);
+
+    if (result == null) {
+      return null;
+    }
+
+    final listInt = List<int>();
+    for (var i in result) {
+      listInt.add(i);
+    }
+
+    return listInt;
   }
 }
 
