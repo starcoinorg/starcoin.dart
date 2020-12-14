@@ -215,6 +215,9 @@ void main() {
         AccountAddress.fromJson(result['address'].replaceAll("0x", ""));
     final balance = await node.balanceOfStc(address);
     print(balance.toBigInt());
+
+    final nodeInfo = await node.nodeInfo();
+    print(nodeInfo['peer_info']['chain_info']['total_difficulty']);
   });
 
   test('events', () async {

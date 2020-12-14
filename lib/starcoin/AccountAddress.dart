@@ -54,4 +54,8 @@ class AccountAddress {
   Map<String, dynamic> toJson() => {
         "value": HEX.encode(value),
       };
+
+  String toString() {
+    return "Ox" + HEX.encode(value);
+  }
 }
