@@ -218,6 +218,16 @@ void main() {
 
     final nodeInfo = await node.nodeInfo();
     print(nodeInfo['peer_info']['chain_info']['total_difficulty']);
+
+    final syncStatus = await node.syncStatus();
+    print(syncStatus);
+
+    final syncProgress = await node.syncProgress();
+    final taskNames = syncProgress['current']['task_name'].split("::");
+    print(taskNames[taskNames.length - 1]);
+
+    final double percent = syncProgress['current']['percent'];
+    print(percent);
   });
 
   test('events', () async {

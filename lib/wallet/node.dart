@@ -28,6 +28,20 @@ class Node {
     return result;
   }
 
+  Future<dynamic> syncStatus() async {
+    final client = StarcoinClient(_url, Client());
+
+    var result = await client.makeRPCCall('sync.status', []);
+    return result;
+  }
+
+  Future<dynamic> syncProgress() async {
+    final client = StarcoinClient(_url, Client());
+
+    var result = await client.makeRPCCall('sync.progress', []);
+    return result;
+  }
+
   Future<Int128> balanceOfStc(AccountAddress sender) async {
     return await balanceOf(
         sender,
