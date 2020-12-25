@@ -42,6 +42,14 @@ class Node {
     return result;
   }
 
+  Future<dynamic> exportAccount(String accountAddress, String password) async {
+    final client = StarcoinClient(_url, Client());
+
+    var result =
+        await client.makeRPCCall('account.export', [accountAddress, password]);
+    return result;
+  }
+
   Future<Int128> balanceOfStc(AccountAddress sender) async {
     return await balanceOf(
         sender,

@@ -5,6 +5,7 @@ import 'package:starcoin_wallet/serde/serde.dart';
 import 'package:starcoin_wallet/wallet/json_rpc.dart';
 
 import 'package:starcoin_wallet/wallet/account_manager.dart';
+import 'package:starcoin_wallet/wallet/keypair.dart';
 import 'package:starcoin_wallet/wallet/node.dart';
 import 'package:starcoin_wallet/wallet/wallet_client.dart';
 import 'package:starcoin_wallet/wallet/account.dart';
@@ -210,6 +211,12 @@ void main() {
     final node = Node("http://127.0.0.1:9850");
     final result = await node.defaultAccount();
     print(result);
+
+    final List exportedAccount =
+        await node.exportAccount(result['address'], "");
+    print(KeyPair(
+            Uint8List.fromList(exportedAccount.map((e) => e as int).toList()))
+        .getPrivateKeyHex());
 
     final address =
         AccountAddress.fromJson(result['address'].replaceAll("0x", ""));

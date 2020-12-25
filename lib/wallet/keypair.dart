@@ -63,6 +63,14 @@ class KeyPair {
       : _privateKey = Helpers.hexToBytes(json['private_key']),
         _publicKey = Helpers.hexToBytes(json['public_key']);
 
+  KeyPair.fromHex(String hexPrivateKey) {
+    if (hexPrivateKey.startsWith("0x")) {
+      hexPrivateKey = hexPrivateKey.replaceAll("0x", "");
+    }
+    _privateKey = Helpers.hexToBytes(hexPrivateKey);
+    _publicKey = ed25519_dart.publicKey(_privateKey);
+  }
+
   Map<String, dynamic> toJson() => {
         "private_key": getPrivateKeyHex(),
         "public_key": getPublicKeyHex(),
