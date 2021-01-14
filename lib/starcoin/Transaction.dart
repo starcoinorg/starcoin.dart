@@ -14,14 +14,14 @@ abstract class Transaction {
     }
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
 
-  static Transaction lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static Transaction bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       Transaction value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -29,7 +29,7 @@ abstract class Transaction {
       return value;
   }
 
-  static Transaction fromJson(Map<String, dynamic> json){
+  static Transaction fromJson(dynamic json){
     final type = json['type'] as int;
     switch (type) {
       case 0: return TransactionUserTransactionItem.loadJson(json);
@@ -38,7 +38,7 @@ abstract class Transaction {
     }
   }
 
-  Map<String, dynamic> toJson();
+  dynamic toJson();
 }
 
 
@@ -76,11 +76,11 @@ class TransactionUserTransactionItem extends Transaction {
     return value;
   }
 
-  TransactionUserTransactionItem.loadJson(Map<String, dynamic> json) :
+  TransactionUserTransactionItem.loadJson(dynamic json) :
     value = SignedUserTransaction.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 0,
     "type_name" : "UserTransaction"
   };
@@ -120,11 +120,11 @@ class TransactionBlockMetadataItem extends Transaction {
     return value;
   }
 
-  TransactionBlockMetadataItem.loadJson(Map<String, dynamic> json) :
+  TransactionBlockMetadataItem.loadJson(dynamic json) :
     value = BlockMetadata.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 1,
     "type_name" : "BlockMetadata"
   };

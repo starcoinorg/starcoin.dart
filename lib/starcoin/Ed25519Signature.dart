@@ -12,8 +12,8 @@ class Ed25519Signature {
     serializer.serialize_bytes(value);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class Ed25519Signature {
     return new Ed25519Signature(value);
   }
 
-  static Ed25519Signature lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static Ed25519Signature bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       Ed25519Signature value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -48,10 +48,8 @@ class Ed25519Signature {
     return value;
   }
 
-  Ed25519Signature.fromJson(Map<String, dynamic> json) :
-    value = Bytes.fromJson(json['value']) ;
+  Ed25519Signature.fromJson(dynamic json) :
+    value = json ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
-  };
+  dynamic toJson() => value;
 }

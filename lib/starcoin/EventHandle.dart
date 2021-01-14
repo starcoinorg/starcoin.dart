@@ -16,8 +16,8 @@ class EventHandle {
     key.serialize(serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -28,8 +28,8 @@ class EventHandle {
     return new EventHandle(count,key);
   }
 
-  static EventHandle lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static EventHandle bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       EventHandle value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -55,12 +55,12 @@ class EventHandle {
     return value;
   }
 
-  EventHandle.fromJson(Map<String, dynamic> json) :
+  EventHandle.fromJson(dynamic json) :
     count = json['count'] ,
     key = EventKey.fromJson(json['key']) ;
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "count" : count ,
-    "key" : key ,
+    "key" : key.toJson() ,
   };
 }

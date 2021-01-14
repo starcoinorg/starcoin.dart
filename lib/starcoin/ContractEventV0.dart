@@ -24,8 +24,8 @@ class ContractEventV0 {
     serializer.serialize_bytes(event_data);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -38,8 +38,8 @@ class ContractEventV0 {
     return new ContractEventV0(key,sequence_number,type_tag,event_data);
   }
 
-  static ContractEventV0 lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static ContractEventV0 bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       ContractEventV0 value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -69,16 +69,16 @@ class ContractEventV0 {
     return value;
   }
 
-  ContractEventV0.fromJson(Map<String, dynamic> json) :
+  ContractEventV0.fromJson(dynamic json) :
     key = EventKey.fromJson(json['key']) ,
     sequence_number = json['sequence_number'] ,
     type_tag = TypeTag.fromJson(json['type_tag']) ,
     event_data = Bytes.fromJson(json['event_data']) ;
 
-  Map<String, dynamic> toJson() => {
-    "key" : key ,
+  dynamic toJson() => {
+    "key" : key.toJson() ,
     "sequence_number" : sequence_number ,
-    "type_tag" : type_tag ,
-    "event_data" : event_data ,
+    "type_tag" : type_tag.toJson() ,
+    "event_data" : event_data.toJson() ,
   };
 }

@@ -12,8 +12,8 @@ class Identifier {
     serializer.serialize_str(value);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class Identifier {
     return new Identifier(value);
   }
 
-  static Identifier lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static Identifier bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       Identifier value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -48,10 +48,8 @@ class Identifier {
     return value;
   }
 
-  Identifier.fromJson(Map<String, dynamic> json) :
-    value = json['value'] ;
+  Identifier.fromJson(dynamic json) :
+    value = json ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : 'value' ,
-  };
+  dynamic toJson() => value;
 }

@@ -16,14 +16,14 @@ abstract class Metadata {
     }
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
 
-  static Metadata lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static Metadata bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       Metadata value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -31,7 +31,7 @@ abstract class Metadata {
       return value;
   }
 
-  static Metadata fromJson(Map<String, dynamic> json){
+  static Metadata fromJson(dynamic json){
     final type = json['type'] as int;
     switch (type) {
       case 0: return MetadataUndefinedItem.loadJson(json);
@@ -42,7 +42,7 @@ abstract class Metadata {
     }
   }
 
-  Map<String, dynamic> toJson();
+  dynamic toJson();
 }
 
 
@@ -70,9 +70,9 @@ class MetadataUndefinedItem extends Metadata {
     return value;
   }
 
-  MetadataUndefinedItem.loadJson(Map<String, dynamic> json);
+  MetadataUndefinedItem.loadJson(dynamic json);
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "type" : 0,
     "type_name" : "Undefined"
   };
@@ -112,11 +112,11 @@ class MetadataGeneralMetadataItem extends Metadata {
     return value;
   }
 
-  MetadataGeneralMetadataItem.loadJson(Map<String, dynamic> json) :
+  MetadataGeneralMetadataItem.loadJson(dynamic json) :
     value = GeneralMetadata.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 1,
     "type_name" : "GeneralMetadata"
   };
@@ -156,11 +156,11 @@ class MetadataTravelRuleMetadataItem extends Metadata {
     return value;
   }
 
-  MetadataTravelRuleMetadataItem.loadJson(Map<String, dynamic> json) :
+  MetadataTravelRuleMetadataItem.loadJson(dynamic json) :
     value = TravelRuleMetadata.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 2,
     "type_name" : "TravelRuleMetadata"
   };
@@ -200,11 +200,11 @@ class MetadataUnstructuredBytesMetadataItem extends Metadata {
     return value;
   }
 
-  MetadataUnstructuredBytesMetadataItem.loadJson(Map<String, dynamic> json) :
+  MetadataUnstructuredBytesMetadataItem.loadJson(dynamic json) :
     value = UnstructuredBytesMetadata.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 3,
     "type_name" : "UnstructuredBytesMetadata"
   };

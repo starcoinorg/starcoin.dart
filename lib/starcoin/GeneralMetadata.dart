@@ -13,14 +13,14 @@ abstract class GeneralMetadata {
     }
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
 
-  static GeneralMetadata lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static GeneralMetadata bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       GeneralMetadata value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -28,7 +28,7 @@ abstract class GeneralMetadata {
       return value;
   }
 
-  static GeneralMetadata fromJson(Map<String, dynamic> json){
+  static GeneralMetadata fromJson(dynamic json){
     final type = json['type'] as int;
     switch (type) {
       case 0: return GeneralMetadataGeneralMetadataVersion0Item.loadJson(json);
@@ -36,7 +36,7 @@ abstract class GeneralMetadata {
     }
   }
 
-  Map<String, dynamic> toJson();
+  dynamic toJson();
 }
 
 
@@ -74,11 +74,11 @@ class GeneralMetadataGeneralMetadataVersion0Item extends GeneralMetadata {
     return value;
   }
 
-  GeneralMetadataGeneralMetadataVersion0Item.loadJson(Map<String, dynamic> json) :
+  GeneralMetadataGeneralMetadataVersion0Item.loadJson(dynamic json) :
     value = GeneralMetadataV0.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 0,
     "type_name" : "GeneralMetadataVersion0"
   };

@@ -12,8 +12,8 @@ class TravelRuleMetadataV0 {
     TraitHelpers.serialize_option_str(off_chain_reference_id, serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class TravelRuleMetadataV0 {
     return new TravelRuleMetadataV0(off_chain_reference_id);
   }
 
-  static TravelRuleMetadataV0 lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static TravelRuleMetadataV0 bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       TravelRuleMetadataV0 value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -48,10 +48,10 @@ class TravelRuleMetadataV0 {
     return value;
   }
 
-  TravelRuleMetadataV0.fromJson(Map<String, dynamic> json) :
+  TravelRuleMetadataV0.fromJson(dynamic json) :
     off_chain_reference_id = json['off_chain_reference_id'] ;
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "off_chain_reference_id" : off_chain_reference_id.isEmpty?null:off_chain_reference_id.value ,
   };
 }

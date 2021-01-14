@@ -16,8 +16,8 @@ class ChangeSet {
     TraitHelpers.serialize_vector_ContractEvent(events, serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -28,8 +28,8 @@ class ChangeSet {
     return new ChangeSet(write_set,events);
   }
 
-  static ChangeSet lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static ChangeSet bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       ChangeSet value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -55,12 +55,12 @@ class ChangeSet {
     return value;
   }
 
-  ChangeSet.fromJson(Map<String, dynamic> json) :
+  ChangeSet.fromJson(dynamic json) :
     write_set = WriteSet.fromJson(json['write_set']) ,
     events = List<ContractEvent>.from(json['events'].map((f) => ContractEvent.fromJson(f)).toList()) ;
 
-  Map<String, dynamic> toJson() => {
-    "write_set" : write_set ,
-    "events" : events ,
+  dynamic toJson() => {
+    "write_set" : write_set.toJson() ,
+    'events' : events.map((f) => f.toJson()).toList(),
   };
 }

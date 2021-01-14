@@ -20,8 +20,8 @@ class GeneralMetadataV0 {
     TraitHelpers.serialize_option_u64(referenced_event, serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -33,8 +33,8 @@ class GeneralMetadataV0 {
     return new GeneralMetadataV0(to_subaddress,from_subaddress,referenced_event);
   }
 
-  static GeneralMetadataV0 lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static GeneralMetadataV0 bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       GeneralMetadataV0 value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -62,12 +62,12 @@ class GeneralMetadataV0 {
     return value;
   }
 
-  GeneralMetadataV0.fromJson(Map<String, dynamic> json) :
+  GeneralMetadataV0.fromJson(dynamic json) :
     to_subaddress = json['to_subaddress'] ,
     from_subaddress = json['from_subaddress'] ,
     referenced_event = json['referenced_event'] ;
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "to_subaddress" : to_subaddress.isEmpty?null:to_subaddress.value ,
     "from_subaddress" : from_subaddress.isEmpty?null:from_subaddress.value ,
     "referenced_event" : referenced_event.isEmpty?null:referenced_event.value ,

@@ -14,14 +14,14 @@ abstract class TransactionAuthenticator {
     }
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
 
-  static TransactionAuthenticator lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static TransactionAuthenticator bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       TransactionAuthenticator value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -29,7 +29,7 @@ abstract class TransactionAuthenticator {
       return value;
   }
 
-  static TransactionAuthenticator fromJson(Map<String, dynamic> json){
+  static TransactionAuthenticator fromJson(dynamic json){
     final type = json['type'] as int;
     switch (type) {
       case 0: return TransactionAuthenticatorEd25519Item.loadJson(json);
@@ -38,7 +38,7 @@ abstract class TransactionAuthenticator {
     }
   }
 
-  Map<String, dynamic> toJson();
+  dynamic toJson();
 }
 
 
@@ -83,13 +83,13 @@ class TransactionAuthenticatorEd25519Item extends TransactionAuthenticator {
     return value;
   }
 
-  TransactionAuthenticatorEd25519Item.loadJson(Map<String, dynamic> json) :
+  TransactionAuthenticatorEd25519Item.loadJson(dynamic json) :
     public_key = Ed25519PublicKey.fromJson(json['public_key']) ,
     signature = Ed25519Signature.fromJson(json['signature']) ;
 
-  Map<String, dynamic> toJson() => {
-    "public_key" : public_key ,
-    "signature" : signature ,
+  dynamic toJson() => {
+    "public_key" : public_key.toJson() ,
+    "signature" : signature.toJson() ,
     "type" : 0,
     "type_name" : "Ed25519"
   };
@@ -136,13 +136,13 @@ class TransactionAuthenticatorMultiEd25519Item extends TransactionAuthenticator 
     return value;
   }
 
-  TransactionAuthenticatorMultiEd25519Item.loadJson(Map<String, dynamic> json) :
+  TransactionAuthenticatorMultiEd25519Item.loadJson(dynamic json) :
     public_key = MultiEd25519PublicKey.fromJson(json['public_key']) ,
     signature = MultiEd25519Signature.fromJson(json['signature']) ;
 
-  Map<String, dynamic> toJson() => {
-    "public_key" : public_key ,
-    "signature" : signature ,
+  dynamic toJson() => {
+    "public_key" : public_key.toJson() ,
+    "signature" : signature.toJson() ,
     "type" : 1,
     "type_name" : "MultiEd25519"
   };

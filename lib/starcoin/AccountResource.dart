@@ -36,8 +36,8 @@ class AccountResource {
     serializer.serialize_u64(sequence_number);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -53,8 +53,8 @@ class AccountResource {
     return new AccountResource(authentication_key,withdrawal_capability,key_rotation_capability,received_events,sent_events,accept_token_events,sequence_number);
   }
 
-  static AccountResource lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static AccountResource bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       AccountResource value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -90,7 +90,7 @@ class AccountResource {
     return value;
   }
 
-  AccountResource.fromJson(Map<String, dynamic> json) :
+  AccountResource.fromJson(dynamic json) :
     authentication_key = Bytes.fromJson(json['authentication_key']) ,
     withdrawal_capability = json['withdrawal_capability'] ,
     key_rotation_capability = json['key_rotation_capability'] ,
@@ -99,13 +99,13 @@ class AccountResource {
     accept_token_events = EventHandle.fromJson(json['accept_token_events']) ,
     sequence_number = json['sequence_number'] ;
 
-  Map<String, dynamic> toJson() => {
-    "authentication_key" : authentication_key ,
+  dynamic toJson() => {
+    "authentication_key" : authentication_key.toJson() ,
     "withdrawal_capability" : withdrawal_capability.isEmpty?null:withdrawal_capability.value ,
     "key_rotation_capability" : key_rotation_capability.isEmpty?null:key_rotation_capability.value ,
-    "received_events" : received_events ,
-    "sent_events" : sent_events ,
-    "accept_token_events" : accept_token_events ,
+    "received_events" : received_events.toJson() ,
+    "sent_events" : sent_events.toJson() ,
+    "accept_token_events" : accept_token_events.toJson() ,
     "sequence_number" : sequence_number ,
   };
 }

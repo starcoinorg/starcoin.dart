@@ -24,8 +24,8 @@ class StructTag {
     TraitHelpers.serialize_vector_TypeTag(type_params, serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -38,8 +38,8 @@ class StructTag {
     return new StructTag(address,module,name,type_params);
   }
 
-  static StructTag lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static StructTag bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       StructTag value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -69,16 +69,16 @@ class StructTag {
     return value;
   }
 
-  StructTag.fromJson(Map<String, dynamic> json) :
+  StructTag.fromJson(dynamic json) :
     address = AccountAddress.fromJson(json['address']) ,
     module = Identifier.fromJson(json['module']) ,
     name = Identifier.fromJson(json['name']) ,
     type_params = List<TypeTag>.from(json['type_params'].map((f) => TypeTag.fromJson(f)).toList()) ;
 
-  Map<String, dynamic> toJson() => {
-    "address" : address ,
-    "module" : module ,
-    "name" : name ,
-    "type_params" : type_params ,
+  dynamic toJson() => {
+    "address" : address.toJson() ,
+    "module" : module.toJson() ,
+    "name" : name.toJson() ,
+    'type_params' : type_params.map((f) => f.toJson()).toList(),
   };
 }

@@ -12,8 +12,8 @@ class AccountAddress {
     TraitHelpers.serialize_array16_u8_array(value, serializer);
   }
 
-  Uint8List lcsSerialize() {
-    var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+    var serializer = new BcsSerializer();
     serialize(serializer);
     return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class AccountAddress {
     return new AccountAddress(value);
   }
 
-  static AccountAddress lcsDeserialize(Uint8List input) {
-    var deserializer = new LcsDeserializer(input);
+  static AccountAddress bcsDeserialize(Uint8List input) {
+    var deserializer = new BcsDeserializer(input);
     AccountAddress value = deserialize(deserializer);
     if (deserializer.get_buffer_offset() < input.length) {
       throw new Exception("Some input bytes were not read");
@@ -51,9 +51,7 @@ class AccountAddress {
 
   AccountAddress.fromJson(String json) : value = HEX.decode(json);
 
-  Map<String, dynamic> toJson() => {
-        "value": HEX.encode(value),
-      };
+  String toJson() => HEX.encode(value);
 
   String toString() {
     return "Ox" + HEX.encode(value);

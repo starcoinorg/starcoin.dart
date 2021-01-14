@@ -2,9 +2,9 @@ part of starcoin_types;
 
 class AccessPath {
   AccountAddress address;
-  Bytes path;
+  DataPath path;
 
-  AccessPath(AccountAddress address, Bytes path) {
+  AccessPath(AccountAddress address, DataPath path) {
     assert (address != null);
     assert (path != null);
     this.address = address;
@@ -13,23 +13,23 @@ class AccessPath {
 
   void serialize(BinarySerializer serializer){
     address.serialize(serializer);
-    serializer.serialize_bytes(path);
+    path.serialize(serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
 
   static AccessPath deserialize(BinaryDeserializer deserializer){
     var address = AccountAddress.deserialize(deserializer);
-    var path = deserializer.deserialize_bytes();
+    var path = DataPath.deserialize(deserializer);
     return new AccessPath(address,path);
   }
 
-  static AccessPath lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static AccessPath bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       AccessPath value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -55,12 +55,12 @@ class AccessPath {
     return value;
   }
 
-  AccessPath.fromJson(Map<String, dynamic> json) :
+  AccessPath.fromJson(dynamic json) :
     address = AccountAddress.fromJson(json['address']) ,
-    path = Bytes.fromJson(json['path']) ;
+    path = DataPath.fromJson(json['path']) ;
 
-  Map<String, dynamic> toJson() => {
-    "address" : address ,
-    "path" : path ,
+  dynamic toJson() => {
+    "address" : address.toJson() ,
+    "path" : path.toJson() ,
   };
 }

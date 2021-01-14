@@ -88,7 +88,7 @@ class WalletClient {
       final txnHash = events[i]['transaction_hash'];
       var txnWithInfo = await getTransactionDetail(txnHash);
       txnWithInfo.event = events[i];
-      if (events[i]['type_tags']['Struct']['name'] == 'DepositEvent') {
+      if (events[i]['type_tag']['Struct']['name'] == 'DepositEvent') {
         txnWithInfo.paymentType = EventType.Deposit;
       } else {
         txnWithInfo.paymentType = EventType.WithDraw;
@@ -98,13 +98,13 @@ class WalletClient {
     return txnList;
   }
 
-  Future<List<int>> getState(AccountAddress sender, Uint8List path) async {
+  Future<List<int>> getState(AccountAddress sender, DataPath path) async {
     final jsonRpc = StarcoinClient(url, Client());
 
-    final accessPath = AccessPath(sender, Bytes(Uint8List.fromList(path)));
+    final accessPath = AccessPath(sender, path);
 
     final result = await jsonRpc.makeRPCCall(
-        'state_hex.get', [Helpers.byteToHex(accessPath.lcsSerialize())]);
+        'state_hex.get', [Helpers.byteToHex(accessPath.bcsSerialize())]);
 
     if (result == null) {
       return null;

@@ -16,8 +16,8 @@ class SignedUserTransaction {
     authenticator.serialize(serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -28,8 +28,8 @@ class SignedUserTransaction {
     return new SignedUserTransaction(raw_txn,authenticator);
   }
 
-  static SignedUserTransaction lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static SignedUserTransaction bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       SignedUserTransaction value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -55,12 +55,12 @@ class SignedUserTransaction {
     return value;
   }
 
-  SignedUserTransaction.fromJson(Map<String, dynamic> json) :
+  SignedUserTransaction.fromJson(dynamic json) :
     raw_txn = RawTransaction.fromJson(json['raw_txn']) ,
     authenticator = TransactionAuthenticator.fromJson(json['authenticator']) ;
 
-  Map<String, dynamic> toJson() => {
-    "raw_txn" : raw_txn ,
-    "authenticator" : authenticator ,
+  dynamic toJson() => {
+    "raw_txn" : raw_txn.toJson() ,
+    "authenticator" : authenticator.toJson() ,
   };
 }

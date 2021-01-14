@@ -32,8 +32,8 @@ class BlockMetadata {
     serializer.serialize_u64(number);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -48,8 +48,8 @@ class BlockMetadata {
     return new BlockMetadata(parent_hash,timestamp,author,auth_key_prefix,uncles,number);
   }
 
-  static BlockMetadata lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static BlockMetadata bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       BlockMetadata value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -83,7 +83,7 @@ class BlockMetadata {
     return value;
   }
 
-  BlockMetadata.fromJson(Map<String, dynamic> json) :
+  BlockMetadata.fromJson(dynamic json) :
     parent_hash = HashValue.fromJson(json['parent_hash']) ,
     timestamp = json['timestamp'] ,
     author = AccountAddress.fromJson(json['author']) ,
@@ -91,11 +91,11 @@ class BlockMetadata {
     uncles = json['uncles'] ,
     number = json['number'] ;
 
-  Map<String, dynamic> toJson() => {
-    "parent_hash" : parent_hash ,
+  dynamic toJson() => {
+    "parent_hash" : parent_hash.toJson() ,
     "timestamp" : timestamp ,
-    "author" : author ,
-    "auth_key_prefix" : auth_key_prefix ,
+    "author" : author.toJson() ,
+    "auth_key_prefix" : auth_key_prefix.toJson() ,
     "uncles" : uncles ,
     "number" : number ,
   };

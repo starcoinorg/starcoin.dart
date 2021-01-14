@@ -20,8 +20,8 @@ class Script {
     TraitHelpers.serialize_vector_TransactionArgument(args, serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -33,8 +33,8 @@ class Script {
     return new Script(code,ty_args,args);
   }
 
-  static Script lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static Script bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       Script value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -62,14 +62,14 @@ class Script {
     return value;
   }
 
-  Script.fromJson(Map<String, dynamic> json) :
+  Script.fromJson(dynamic json) :
     code = Bytes.fromJson(json['code']) ,
     ty_args = List<TypeTag>.from(json['ty_args'].map((f) => TypeTag.fromJson(f)).toList()) ,
     args = List<TransactionArgument>.from(json['args'].map((f) => TransactionArgument.fromJson(f)).toList()) ;
 
-  Map<String, dynamic> toJson() => {
-    "code" : code ,
-    "ty_args" : ty_args ,
-    "args" : args ,
+  dynamic toJson() => {
+    "code" : code.toJson() ,
+    'ty_args' : ty_args.map((f) => f.toJson()).toList(),
+    'args' : args.map((f) => f.toJson()).toList(),
   };
 }

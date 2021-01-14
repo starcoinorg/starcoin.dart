@@ -14,14 +14,14 @@ abstract class WriteSetPayload {
     }
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
 
-  static WriteSetPayload lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static WriteSetPayload bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       WriteSetPayload value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -29,7 +29,7 @@ abstract class WriteSetPayload {
       return value;
   }
 
-  static WriteSetPayload fromJson(Map<String, dynamic> json){
+  static WriteSetPayload fromJson(dynamic json){
     final type = json['type'] as int;
     switch (type) {
       case 0: return WriteSetPayloadDirectItem.loadJson(json);
@@ -38,7 +38,7 @@ abstract class WriteSetPayload {
     }
   }
 
-  Map<String, dynamic> toJson();
+  dynamic toJson();
 }
 
 
@@ -76,11 +76,11 @@ class WriteSetPayloadDirectItem extends WriteSetPayload {
     return value;
   }
 
-  WriteSetPayloadDirectItem.loadJson(Map<String, dynamic> json) :
+  WriteSetPayloadDirectItem.loadJson(dynamic json) :
     value = ChangeSet.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 0,
     "type_name" : "Direct"
   };
@@ -127,13 +127,13 @@ class WriteSetPayloadScriptItem extends WriteSetPayload {
     return value;
   }
 
-  WriteSetPayloadScriptItem.loadJson(Map<String, dynamic> json) :
+  WriteSetPayloadScriptItem.loadJson(dynamic json) :
     execute_as = AccountAddress.fromJson(json['execute_as']) ,
     script = Script.fromJson(json['script']) ;
 
-  Map<String, dynamic> toJson() => {
-    "execute_as" : execute_as ,
-    "script" : script ,
+  dynamic toJson() => {
+    "execute_as" : execute_as.toJson() ,
+    "script" : script.toJson() ,
     "type" : 1,
     "type_name" : "Script"
   };

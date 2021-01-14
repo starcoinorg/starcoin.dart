@@ -13,14 +13,14 @@ abstract class ContractEvent {
     }
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
 
-  static ContractEvent lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static ContractEvent bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       ContractEvent value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -28,7 +28,7 @@ abstract class ContractEvent {
       return value;
   }
 
-  static ContractEvent fromJson(Map<String, dynamic> json){
+  static ContractEvent fromJson(dynamic json){
     final type = json['type'] as int;
     switch (type) {
       case 0: return ContractEventV0Item.loadJson(json);
@@ -36,7 +36,7 @@ abstract class ContractEvent {
     }
   }
 
-  Map<String, dynamic> toJson();
+  dynamic toJson();
 }
 
 
@@ -74,11 +74,11 @@ class ContractEventV0Item extends ContractEvent {
     return value;
   }
 
-  ContractEventV0Item.loadJson(Map<String, dynamic> json) :
+  ContractEventV0Item.loadJson(dynamic json) :
     value = ContractEventV0.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 0,
     "type_name" : "V0"
   };

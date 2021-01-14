@@ -14,14 +14,14 @@ abstract class WriteOp {
     }
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
 
-  static WriteOp lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static WriteOp bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       WriteOp value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -29,7 +29,7 @@ abstract class WriteOp {
       return value;
   }
 
-  static WriteOp fromJson(Map<String, dynamic> json){
+  static WriteOp fromJson(dynamic json){
     final type = json['type'] as int;
     switch (type) {
       case 0: return WriteOpDeletionItem.loadJson(json);
@@ -38,7 +38,7 @@ abstract class WriteOp {
     }
   }
 
-  Map<String, dynamic> toJson();
+  dynamic toJson();
 }
 
 
@@ -66,9 +66,9 @@ class WriteOpDeletionItem extends WriteOp {
     return value;
   }
 
-  WriteOpDeletionItem.loadJson(Map<String, dynamic> json);
+  WriteOpDeletionItem.loadJson(dynamic json);
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "type" : 0,
     "type_name" : "Deletion"
   };
@@ -108,11 +108,11 @@ class WriteOpValueItem extends WriteOp {
     return value;
   }
 
-  WriteOpValueItem.loadJson(Map<String, dynamic> json) :
+  WriteOpValueItem.loadJson(dynamic json) :
     value = Bytes.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 1,
     "type_name" : "Value"
   };

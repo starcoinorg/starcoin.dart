@@ -12,8 +12,8 @@ class HashValue {
     serializer.serialize_bytes(value);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class HashValue {
     return new HashValue(value);
   }
 
-  static HashValue lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static HashValue bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       HashValue value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -48,10 +48,8 @@ class HashValue {
     return value;
   }
 
-  HashValue.fromJson(Map<String, dynamic> json) :
-    value = Bytes.fromJson(json['value']) ;
+  HashValue.fromJson(dynamic json) :
+    value = json ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
-  };
+  dynamic toJson() => value;
 }

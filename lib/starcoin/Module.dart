@@ -12,8 +12,8 @@ class Module {
     serializer.serialize_bytes(code);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class Module {
     return new Module(code);
   }
 
-  static Module lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static Module bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       Module value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -48,10 +48,10 @@ class Module {
     return value;
   }
 
-  Module.fromJson(Map<String, dynamic> json) :
+  Module.fromJson(dynamic json) :
     code = Bytes.fromJson(json['code']) ;
 
-  Map<String, dynamic> toJson() => {
-    "code" : code ,
+  dynamic toJson() => {
+    "code" : code.toJson() ,
   };
 }

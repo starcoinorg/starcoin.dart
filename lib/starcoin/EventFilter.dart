@@ -24,8 +24,8 @@ class EventFilter {
     TraitHelpers.serialize_option_u64(limit, serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -38,8 +38,8 @@ class EventFilter {
     return new EventFilter(from_block,to_block,event_keys,limit);
   }
 
-  static EventFilter lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static EventFilter bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       EventFilter value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -69,16 +69,16 @@ class EventFilter {
     return value;
   }
 
-  EventFilter.fromJson(Map<String, dynamic> json) :
+  EventFilter.fromJson(dynamic json) :
     from_block = json['from_block'] ,
     to_block = json['to_block'] ,
     event_keys = List<EventKey>.from(json['event_keys'].map((f) => EventKey.fromJson(f)).toList()) ,
     limit = json['limit'] ;
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "from_block" : from_block.isEmpty?null:from_block.value ,
     "to_block" : to_block.isEmpty?null:to_block.value ,
-    "event_keys" : event_keys ,
+    'event_keys' : event_keys.map((f) => f.toJson()).toList(),
     "limit" : limit.isEmpty?null:limit.value ,
   };
 }
