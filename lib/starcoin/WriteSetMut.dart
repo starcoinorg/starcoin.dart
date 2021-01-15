@@ -12,8 +12,8 @@ class WriteSetMut {
     TraitHelpers.serialize_vector_tuple2_AccessPath_WriteOp(write_set, serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class WriteSetMut {
     return new WriteSetMut(write_set);
   }
 
-  static WriteSetMut lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static WriteSetMut bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       WriteSetMut value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -48,10 +48,10 @@ class WriteSetMut {
     return value;
   }
 
-  WriteSetMut.fromJson(Map<String, dynamic> json) :
+  WriteSetMut.fromJson(dynamic json) :
     write_set = json['write_set'] ;
 
-  Map<String, dynamic> toJson() => {
-    "write_set" : write_set ,
+  dynamic toJson() => {
+    'write_set' : write_set,
   };
 }

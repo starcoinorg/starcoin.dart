@@ -12,8 +12,8 @@ class BalanceResource {
     serializer.serialize_u128(token);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class BalanceResource {
     return new BalanceResource(token);
   }
 
-  static BalanceResource lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static BalanceResource bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       BalanceResource value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -48,10 +48,10 @@ class BalanceResource {
     return value;
   }
 
-  BalanceResource.fromJson(Map<String, dynamic> json) :
+  BalanceResource.fromJson(dynamic json) :
     token = json['token'] ;
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "token" : token ,
   };
 }

@@ -69,20 +69,21 @@ void main() {
     List<int> path = List();
     path.add(RESOURCE_TAG);
 
-    var hash = lcsHash(struct_tag.lcsSerialize(), "LIBRA::StructTag");
+    var hash = lcsHash(struct_tag.bcsSerialize(), "LIBRA::StructTag");
     path.addAll(hash);
 
     //var hex_access_path = Helpers.byteToHex(Uint8List.fromList(path));
     //print("hash is " + hex_access_path);
-    AccessPath accessPath = AccessPath(sender, Bytes(Uint8List.fromList(path)));
+    AccessPath accessPath =
+        AccessPath(sender, DataPathResourceItem(struct_tag));
     var result = await client.sendRequest(
-        'state_hex.get', [Helpers.byteToHex(accessPath.lcsSerialize())]);
+        'state_hex.get', [Helpers.byteToHex(accessPath.bcsSerialize())]);
 
     var list_int = List<int>();
     for (var i in result) {
       list_int.add(i);
     }
-    var resource = AccountResource.lcsDeserialize(Uint8List.fromList(list_int));
+    var resource = AccountResource.bcsDeserialize(Uint8List.fromList(list_int));
     print("resouce is " + resource.sequence_number.toString());
 
     struct_tag = StructTag(
@@ -100,20 +101,20 @@ void main() {
     path = List();
     path.add(RESOURCE_TAG);
 
-    hash = lcsHash(struct_tag.lcsSerialize(), "LIBRA::StructTag");
+    hash = lcsHash(struct_tag.bcsSerialize(), "STARCOIN::StructTag");
     path.addAll(hash);
 
     //var hex_access_path = Helpers.byteToHex(Uint8List.fromList(path));
     //print("hash is " + hex_access_path);
-    accessPath = AccessPath(sender, Bytes(Uint8List.fromList(path)));
+    accessPath = AccessPath(sender, DataPathResourceItem(struct_tag));
     result = await client.sendRequest(
-        'state_hex.get', [Helpers.byteToHex(accessPath.lcsSerialize())]);
+        'state_hex.get', [Helpers.byteToHex(accessPath.bcsSerialize())]);
     list_int = List<int>();
     for (var i in result) {
       list_int.add(i);
     }
     var balanceResource =
-        BalanceResource.lcsDeserialize(Uint8List.fromList(list_int));
+        BalanceResource.bcsDeserialize(Uint8List.fromList(list_int));
     print("balance is " + balanceResource.token.low.toString());
 
     var empty_script = TransactionBuilder.encode_empty_script_script();
@@ -139,12 +140,12 @@ void main() {
         node_info['now_seconds'] + 40000,
         ChainId(254));
 
-    var raw_txn_bytes = raw_txn.lcsSerialize();
+    var raw_txn_bytes = raw_txn.bcsSerialize();
 
     print("txn hash is " + Helpers.byteToHex(rawHash(raw_txn_bytes)));
 
     var sign_bytes = account.keyPair
-        .sign(cryptHash(raw_txn_bytes, "LIBRA::RawUserTransaction"));
+        .sign(cryptHash(raw_txn_bytes, "STARCOIN::RawUserTransaction"));
 
     Ed25519PublicKey pub_key =
         Ed25519PublicKey(Bytes(account.keyPair.getPublicKey()));
@@ -156,7 +157,7 @@ void main() {
     SignedUserTransaction signed_txn = SignedUserTransaction(raw_txn, author);
 
     result = await client.sendRequest('txpool.submit_hex_transaction',
-        [Helpers.byteToHex(signed_txn.lcsSerialize())]);
+        [Helpers.byteToHex(signed_txn.bcsSerialize())]);
     print('result is $result');
   });
 
@@ -200,7 +201,6 @@ void main() {
     var subscription = client.addFilter(NewTxnSendRecvEventFilter(account));
 
     await for (var event in subscription) {
-      print(event);
       print(await walletClient.getTransactionInfo(event['transaction_hash']));
       print(await walletClient.getTransaction(event['transaction_hash']));
       break;
@@ -229,12 +229,12 @@ void main() {
     final syncStatus = await node.syncStatus();
     print(syncStatus);
 
-    final syncProgress = await node.syncProgress();
-    final taskNames = syncProgress['current']['task_name'].split("::");
-    print(taskNames[taskNames.length - 1]);
+    //final syncProgress = await node.syncProgress();
+    //final taskNames = syncProgress['current']['task_name'].split("::");
+    //print(taskNames[taskNames.length - 1]);
 
-    final double percent = syncProgress['current']['percent'];
-    print(percent);
+    //final double percent = syncProgress['current']['percent'];
+    //print(percent);
   });
 
   test('events', () async {

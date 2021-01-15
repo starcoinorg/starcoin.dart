@@ -13,14 +13,14 @@ abstract class TravelRuleMetadata {
     }
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
 
-  static TravelRuleMetadata lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static TravelRuleMetadata bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       TravelRuleMetadata value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -28,7 +28,7 @@ abstract class TravelRuleMetadata {
       return value;
   }
 
-  static TravelRuleMetadata fromJson(Map<String, dynamic> json){
+  static TravelRuleMetadata fromJson(dynamic json){
     final type = json['type'] as int;
     switch (type) {
       case 0: return TravelRuleMetadataTravelRuleMetadataVersion0Item.loadJson(json);
@@ -36,7 +36,7 @@ abstract class TravelRuleMetadata {
     }
   }
 
-  Map<String, dynamic> toJson();
+  dynamic toJson();
 }
 
 
@@ -74,11 +74,11 @@ class TravelRuleMetadataTravelRuleMetadataVersion0Item extends TravelRuleMetadat
     return value;
   }
 
-  TravelRuleMetadataTravelRuleMetadataVersion0Item.loadJson(Map<String, dynamic> json) :
+  TravelRuleMetadataTravelRuleMetadataVersion0Item.loadJson(dynamic json) :
     value = TravelRuleMetadataV0.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 0,
     "type_name" : "TravelRuleMetadataVersion0"
   };

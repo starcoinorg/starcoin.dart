@@ -40,8 +40,8 @@ class RawTransaction {
     chain_id.serialize(serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -58,8 +58,8 @@ class RawTransaction {
     return new RawTransaction(sender,sequence_number,payload,max_gas_amount,gas_unit_price,gas_token_code,expiration_timestamp_secs,chain_id);
   }
 
-  static RawTransaction lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static RawTransaction bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       RawTransaction value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -97,7 +97,7 @@ class RawTransaction {
     return value;
   }
 
-  RawTransaction.fromJson(Map<String, dynamic> json) :
+  RawTransaction.fromJson(dynamic json) :
     sender = AccountAddress.fromJson(json['sender']) ,
     sequence_number = json['sequence_number'] ,
     payload = TransactionPayload.fromJson(json['payload']) ,
@@ -107,14 +107,14 @@ class RawTransaction {
     expiration_timestamp_secs = json['expiration_timestamp_secs'] ,
     chain_id = ChainId.fromJson(json['chain_id']) ;
 
-  Map<String, dynamic> toJson() => {
-    "sender" : sender ,
+  dynamic toJson() => {
+    "sender" : sender.toJson() ,
     "sequence_number" : sequence_number ,
-    "payload" : payload ,
+    "payload" : payload.toJson() ,
     "max_gas_amount" : max_gas_amount ,
     "gas_unit_price" : gas_unit_price ,
-    "gas_token_code" : 'gas_token_code' ,
+    "gas_token_code" : gas_token_code ,
     "expiration_timestamp_secs" : expiration_timestamp_secs ,
-    "chain_id" : chain_id ,
+    "chain_id" : chain_id.toJson() ,
   };
 }

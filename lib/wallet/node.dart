@@ -70,17 +70,18 @@ class Node {
     final path = List<int>();
     path.add(RESOURCE_TAG);
 
-    final hash = lcsHash(structTag.lcsSerialize(), "LIBRA::StructTag");
+    final hash = lcsHash(structTag.bcsSerialize(), "STARCOIN::StructTag");
     path.addAll(hash);
 
     final client = WalletClient(_url);
-    final result = await client.getState(sender, Uint8List.fromList(path));
+    final result =
+        await client.getStateJson(sender, DataPathResourceItem(structTag));
 
     if (result == null) {
       return Int128(0, 0);
     }
     final balanceResource =
-        BalanceResource.lcsDeserialize(Uint8List.fromList(result));
+        BalanceResource.bcsDeserialize(Uint8List.fromList(result));
     return balanceResource.token;
   }
 }

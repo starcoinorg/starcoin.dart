@@ -12,8 +12,8 @@ class WithdrawCapabilityResource {
     account_address.serialize(serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class WithdrawCapabilityResource {
     return new WithdrawCapabilityResource(account_address);
   }
 
-  static WithdrawCapabilityResource lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static WithdrawCapabilityResource bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       WithdrawCapabilityResource value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -48,10 +48,10 @@ class WithdrawCapabilityResource {
     return value;
   }
 
-  WithdrawCapabilityResource.fromJson(Map<String, dynamic> json) :
+  WithdrawCapabilityResource.fromJson(dynamic json) :
     account_address = AccountAddress.fromJson(json['account_address']) ;
 
-  Map<String, dynamic> toJson() => {
-    "account_address" : account_address ,
+  dynamic toJson() => {
+    "account_address" : account_address.toJson() ,
   };
 }

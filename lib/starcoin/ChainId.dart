@@ -12,8 +12,8 @@ class ChainId {
     serializer.serialize_u8(value);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class ChainId {
     return new ChainId(value);
   }
 
-  static ChainId lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static ChainId bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       ChainId value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -48,10 +48,8 @@ class ChainId {
     return value;
   }
 
-  ChainId.fromJson(Map<String, dynamic> json) :
-    value = json['value'] ;
+  ChainId.fromJson(dynamic json) :
+    value = json ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
-  };
+  dynamic toJson() => value;
 }

@@ -77,7 +77,7 @@ abstract class BinarySerializer {
 
   void serialize_variant_index(int index);
 
-  void serialize_str(String str) {
+  void serialize_str(String str){
     serialize_uint8list(Uint8List.fromList(str.codeUnits));
   }
 

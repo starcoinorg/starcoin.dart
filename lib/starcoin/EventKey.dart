@@ -4,42 +4,41 @@ class EventKey {
   Bytes value;
 
   EventKey(Bytes value) {
-    assert(value != null);
+    assert (value != null);
     this.value = value;
   }
 
-  void serialize(BinarySerializer serializer) {
+  void serialize(BinarySerializer serializer){
     serializer.serialize_bytes(value);
   }
 
-  Uint8List lcsSerialize() {
-    var serializer = new LcsSerializer();
-    serialize(serializer);
-    return serializer.get_bytes();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
+      serialize(serializer);
+      return serializer.get_bytes();
   }
 
-  static EventKey deserialize(BinaryDeserializer deserializer) {
+  static EventKey deserialize(BinaryDeserializer deserializer){
     var value = deserializer.deserialize_bytes();
     return new EventKey(value);
   }
 
-  static EventKey lcsDeserialize(Uint8List input) {
-    var deserializer = new LcsDeserializer(input);
-    EventKey value = deserialize(deserializer);
-    if (deserializer.get_buffer_offset() < input.length) {
-      throw new Exception("Some input bytes were not read");
-    }
-    return value;
+  static EventKey bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
+      EventKey value = deserialize(deserializer);
+      if (deserializer.get_buffer_offset() < input.length) {
+           throw new Exception("Some input bytes were not read");
+      }
+      return value;
   }
 
   @override
   bool operator ==(covariant EventKey other) {
     if (other == null) return false;
 
-    if (this.value == other.value) {
-      return true;
-    } else
-      return false;
+    if (  this.value == other.value  ){
+    return true;}
+    else return false;
   }
 
   @override
@@ -49,7 +48,8 @@ class EventKey {
     return value;
   }
 
-  EventKey.fromJson(String json) : value = Bytes.fromJson(json);
+  EventKey.fromJson(dynamic json) :
+    value = json ;
 
-  String toJson() => value.toJson();
+  dynamic toJson() => value;
 }

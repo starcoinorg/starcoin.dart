@@ -18,14 +18,14 @@ abstract class TransactionArgument {
     }
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
 
-  static TransactionArgument lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static TransactionArgument bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       TransactionArgument value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -33,7 +33,7 @@ abstract class TransactionArgument {
       return value;
   }
 
-  static TransactionArgument fromJson(Map<String, dynamic> json){
+  static TransactionArgument fromJson(dynamic json){
     final type = json['type'] as int;
     switch (type) {
       case 0: return TransactionArgumentU8Item.loadJson(json);
@@ -46,7 +46,7 @@ abstract class TransactionArgument {
     }
   }
 
-  Map<String, dynamic> toJson();
+  dynamic toJson();
 }
 
 
@@ -84,10 +84,10 @@ class TransactionArgumentU8Item extends TransactionArgument {
     return value;
   }
 
-  TransactionArgumentU8Item.loadJson(Map<String, dynamic> json) :
+  TransactionArgumentU8Item.loadJson(dynamic json) :
     value = json['value'] ;
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "value" : value ,
     "type" : 0,
     "type_name" : "U8"
@@ -128,10 +128,10 @@ class TransactionArgumentU64Item extends TransactionArgument {
     return value;
   }
 
-  TransactionArgumentU64Item.loadJson(Map<String, dynamic> json) :
+  TransactionArgumentU64Item.loadJson(dynamic json) :
     value = json['value'] ;
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "value" : value ,
     "type" : 1,
     "type_name" : "U64"
@@ -172,10 +172,10 @@ class TransactionArgumentU128Item extends TransactionArgument {
     return value;
   }
 
-  TransactionArgumentU128Item.loadJson(Map<String, dynamic> json) :
+  TransactionArgumentU128Item.loadJson(dynamic json) :
     value = json['value'] ;
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "value" : value ,
     "type" : 2,
     "type_name" : "U128"
@@ -216,11 +216,11 @@ class TransactionArgumentAddressItem extends TransactionArgument {
     return value;
   }
 
-  TransactionArgumentAddressItem.loadJson(Map<String, dynamic> json) :
+  TransactionArgumentAddressItem.loadJson(dynamic json) :
     value = AccountAddress.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 3,
     "type_name" : "Address"
   };
@@ -260,11 +260,11 @@ class TransactionArgumentU8VectorItem extends TransactionArgument {
     return value;
   }
 
-  TransactionArgumentU8VectorItem.loadJson(Map<String, dynamic> json) :
+  TransactionArgumentU8VectorItem.loadJson(dynamic json) :
     value = Bytes.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 4,
     "type_name" : "U8Vector"
   };
@@ -304,10 +304,10 @@ class TransactionArgumentBoolItem extends TransactionArgument {
     return value;
   }
 
-  TransactionArgumentBoolItem.loadJson(Map<String, dynamic> json) :
+  TransactionArgumentBoolItem.loadJson(dynamic json) :
     value = json['value'] ;
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "value" : value ,
     "type" : 5,
     "type_name" : "Bool"

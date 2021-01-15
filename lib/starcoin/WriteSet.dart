@@ -12,8 +12,8 @@ class WriteSet {
     value.serialize(serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class WriteSet {
     return new WriteSet(value);
   }
 
-  static WriteSet lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static WriteSet bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       WriteSet value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -48,10 +48,8 @@ class WriteSet {
     return value;
   }
 
-  WriteSet.fromJson(Map<String, dynamic> json) :
-    value = WriteSetMut.fromJson(json['value']) ;
+  WriteSet.fromJson(dynamic json) :
+    value = json ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
-  };
+  dynamic toJson() => value;
 }

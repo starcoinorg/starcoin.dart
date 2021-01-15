@@ -20,14 +20,14 @@ abstract class TypeTag {
     }
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
 
-  static TypeTag lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static TypeTag bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       TypeTag value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -35,7 +35,7 @@ abstract class TypeTag {
       return value;
   }
 
-  static TypeTag fromJson(Map<String, dynamic> json){
+  static TypeTag fromJson(dynamic json){
     final type = json['type'] as int;
     switch (type) {
       case 0: return TypeTagBoolItem.loadJson(json);
@@ -50,7 +50,7 @@ abstract class TypeTag {
     }
   }
 
-  Map<String, dynamic> toJson();
+  dynamic toJson();
 }
 
 
@@ -78,9 +78,9 @@ class TypeTagBoolItem extends TypeTag {
     return value;
   }
 
-  TypeTagBoolItem.loadJson(Map<String, dynamic> json);
+  TypeTagBoolItem.loadJson(dynamic json);
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "type" : 0,
     "type_name" : "Bool"
   };
@@ -110,9 +110,9 @@ class TypeTagU8Item extends TypeTag {
     return value;
   }
 
-  TypeTagU8Item.loadJson(Map<String, dynamic> json);
+  TypeTagU8Item.loadJson(dynamic json);
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "type" : 1,
     "type_name" : "U8"
   };
@@ -142,9 +142,9 @@ class TypeTagU64Item extends TypeTag {
     return value;
   }
 
-  TypeTagU64Item.loadJson(Map<String, dynamic> json);
+  TypeTagU64Item.loadJson(dynamic json);
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "type" : 2,
     "type_name" : "U64"
   };
@@ -174,9 +174,9 @@ class TypeTagU128Item extends TypeTag {
     return value;
   }
 
-  TypeTagU128Item.loadJson(Map<String, dynamic> json);
+  TypeTagU128Item.loadJson(dynamic json);
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "type" : 3,
     "type_name" : "U128"
   };
@@ -206,9 +206,9 @@ class TypeTagAddressItem extends TypeTag {
     return value;
   }
 
-  TypeTagAddressItem.loadJson(Map<String, dynamic> json);
+  TypeTagAddressItem.loadJson(dynamic json);
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "type" : 4,
     "type_name" : "Address"
   };
@@ -238,9 +238,9 @@ class TypeTagSignerItem extends TypeTag {
     return value;
   }
 
-  TypeTagSignerItem.loadJson(Map<String, dynamic> json);
+  TypeTagSignerItem.loadJson(dynamic json);
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "type" : 5,
     "type_name" : "Signer"
   };
@@ -280,11 +280,11 @@ class TypeTagVectorItem extends TypeTag {
     return value;
   }
 
-  TypeTagVectorItem.loadJson(Map<String, dynamic> json) :
+  TypeTagVectorItem.loadJson(dynamic json) :
     value = TypeTag.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 6,
     "type_name" : "Vector"
   };
@@ -324,11 +324,11 @@ class TypeTagStructItem extends TypeTag {
     return value;
   }
 
-  TypeTagStructItem.loadJson(Map<String, dynamic> json) :
+  TypeTagStructItem.loadJson(dynamic json) :
     value = StructTag.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 7,
     "type_name" : "Struct"
   };

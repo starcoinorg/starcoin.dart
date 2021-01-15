@@ -14,14 +14,14 @@ abstract class TransactionPayload {
     }
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
 
-  static TransactionPayload lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static TransactionPayload bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       TransactionPayload value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -29,7 +29,7 @@ abstract class TransactionPayload {
       return value;
   }
 
-  static TransactionPayload fromJson(Map<String, dynamic> json){
+  static TransactionPayload fromJson(dynamic json){
     final type = json['type'] as int;
     switch (type) {
       case 0: return TransactionPayloadScriptItem.loadJson(json);
@@ -38,7 +38,7 @@ abstract class TransactionPayload {
     }
   }
 
-  Map<String, dynamic> toJson();
+  dynamic toJson();
 }
 
 
@@ -76,11 +76,11 @@ class TransactionPayloadScriptItem extends TransactionPayload {
     return value;
   }
 
-  TransactionPayloadScriptItem.loadJson(Map<String, dynamic> json) :
+  TransactionPayloadScriptItem.loadJson(dynamic json) :
     value = Script.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 0,
     "type_name" : "Script"
   };
@@ -120,11 +120,11 @@ class TransactionPayloadPackageItem extends TransactionPayload {
     return value;
   }
 
-  TransactionPayloadPackageItem.loadJson(Map<String, dynamic> json) :
+  TransactionPayloadPackageItem.loadJson(dynamic json) :
     value = Package.fromJson(json['value']) ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
+  dynamic toJson() => {
+    "value" : value.toJson() ,
     "type" : 1,
     "type_name" : "Package"
   };

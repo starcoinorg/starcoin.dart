@@ -31,4 +31,6 @@ class Bytes {
   Bytes.fromJson(String json) : content = HEX.decode(json);
 
   String toJson() => HEX.encode(content);
+
 }
+

@@ -20,8 +20,8 @@ class Package {
     init_script.serialize(serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -33,8 +33,8 @@ class Package {
     return new Package(package_address,modules,init_script);
   }
 
-  static Package lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static Package bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       Package value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -62,14 +62,14 @@ class Package {
     return value;
   }
 
-  Package.fromJson(Map<String, dynamic> json) :
+  Package.fromJson(dynamic json) :
     package_address = AccountAddress.fromJson(json['package_address']) ,
     modules = List<Module>.from(json['modules'].map((f) => Module.fromJson(f)).toList()) ,
     init_script = Script.fromJson(json['init_script']) ;
 
-  Map<String, dynamic> toJson() => {
-    "package_address" : package_address ,
-    "modules" : modules ,
-    "init_script" : init_script ,
+  dynamic toJson() => {
+    "package_address" : package_address.toJson() ,
+    'modules' : modules.map((f) => f.toJson()).toList(),
+    "init_script" : init_script.toJson() ,
   };
 }

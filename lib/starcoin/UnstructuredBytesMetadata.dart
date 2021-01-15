@@ -12,8 +12,8 @@ class UnstructuredBytesMetadata {
     TraitHelpers.serialize_option_bytes(metadata, serializer);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class UnstructuredBytesMetadata {
     return new UnstructuredBytesMetadata(metadata);
   }
 
-  static UnstructuredBytesMetadata lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static UnstructuredBytesMetadata bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       UnstructuredBytesMetadata value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -48,10 +48,10 @@ class UnstructuredBytesMetadata {
     return value;
   }
 
-  UnstructuredBytesMetadata.fromJson(Map<String, dynamic> json) :
+  UnstructuredBytesMetadata.fromJson(dynamic json) :
     metadata = json['metadata'] ;
 
-  Map<String, dynamic> toJson() => {
+  dynamic toJson() => {
     "metadata" : metadata.isEmpty?null:metadata.value ,
   };
 }

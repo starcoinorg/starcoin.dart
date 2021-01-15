@@ -12,8 +12,8 @@ class MultiEd25519PublicKey {
     serializer.serialize_bytes(value);
   }
 
-  Uint8List lcsSerialize() {
-      var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+      var serializer = new BcsSerializer();
       serialize(serializer);
       return serializer.get_bytes();
   }
@@ -23,8 +23,8 @@ class MultiEd25519PublicKey {
     return new MultiEd25519PublicKey(value);
   }
 
-  static MultiEd25519PublicKey lcsDeserialize(Uint8List input)  {
-     var deserializer = new LcsDeserializer(input);
+  static MultiEd25519PublicKey bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
       MultiEd25519PublicKey value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
@@ -48,10 +48,8 @@ class MultiEd25519PublicKey {
     return value;
   }
 
-  MultiEd25519PublicKey.fromJson(Map<String, dynamic> json) :
-    value = Bytes.fromJson(json['value']) ;
+  MultiEd25519PublicKey.fromJson(dynamic json) :
+    value = json ;
 
-  Map<String, dynamic> toJson() => {
-    "value" : value ,
-  };
+  dynamic toJson() => value;
 }

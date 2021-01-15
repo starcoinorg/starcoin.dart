@@ -17,7 +17,7 @@ class Int128 {
 
   BigInt toBigInt() {
     var result = BigInt.from(high);
-    result = result << 64;
+    result << 64;
     result = result + BigInt.from(low);
     return result;
   }
@@ -39,4 +39,13 @@ class Int128 {
   String toString() {
     return "$high$low";
   }
+
+  Int128.fromJson(String json) {
+    final num = BigInt.parse(json);
+    high = (num >> 64).toInt();
+    low = (num & BigInt.from(0xFFFFFFFFFFFFFFFF)).toInt();
+  }
+
+  String toJson() => this.toBigInt().toString();
+
 }

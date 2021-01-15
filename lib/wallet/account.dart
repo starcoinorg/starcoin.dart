@@ -89,24 +89,24 @@ class Account {
     final path = List<int>();
     path.add(RESOURCE_TAG);
 
-    final hash = lcsHash(structTag.lcsSerialize(), "LIBRA::StructTag");
+    final hash = lcsHash(structTag.bcsSerialize(), "STARCOIN::StructTag");
     path.addAll(hash);
 
-    final result = await getState(url, Uint8List.fromList(path));
+    final result = await getState(url, DataPathResourceItem(structTag));
 
     if (result == null) {
       return Int128(0, 0);
     }
     final balanceResource =
-        BalanceResource.lcsDeserialize(Uint8List.fromList(result));
+        BalanceResource.bcsDeserialize(Uint8List.fromList(result));
     return balanceResource.token;
   }
 
-  Future<List<int>> getState(String url, Uint8List path) async {
+  Future<List<int>> getState(String url, DataPath path) async {
     final client = WalletClient(url);
 
     final sender = AccountAddress(this.keyPair.getAddressBytes());
-    return await client.getState(sender, path);
+    return await client.getStateJson(sender, path);
   }
 
   Future<SubmitTransactionResult> sendTransaction(
@@ -123,12 +123,13 @@ class Account {
     RawTransaction rawTxn = RawTransaction(sender, seq, payload, 20000, 1,
         "0x1::STC::STC", nodeInfoResult['now_seconds'] + 40000, ChainId(254));
 
-    var rawTxnBytes = rawTxn.lcsSerialize();
+    var rawTxnBytes = rawTxn.bcsSerialize();
 
     //print("raw_txn_bytes is $raw_txn_bytes");
 
-    var signBytes =
-        this.keyPair.sign(cryptHash(rawTxnBytes, "LIBRA::RawUserTransaction"));
+    var signBytes = this
+        .keyPair
+        .sign(cryptHash(rawTxnBytes, "STARCOIN::RawUserTransaction"));
 
     Ed25519PublicKey pubKey =
         Ed25519PublicKey(Bytes(this.keyPair.getPublicKey()));
@@ -140,12 +141,12 @@ class Account {
     SignedUserTransaction signedTxn = SignedUserTransaction(rawTxn, author);
 
     final txnHash = Helpers.byteToHex(
-        lcsHash(signedTxn.lcsSerialize(), "LIBRA::SignedUserTransaction"));
+        lcsHash(signedTxn.bcsSerialize(), "STARCOIN::SignedUserTransaction"));
 
     final result = await client.makeRPCCall('txpool.submit_hex_transaction',
-        [Helpers.byteToHex(signedTxn.lcsSerialize())]);
+        [Helpers.byteToHex(signedTxn.bcsSerialize())]);
 
-    if (result['Ok'] == null) {
+    if (result == null) {
       return SubmitTransactionResult(true, txnHash);
     } else {
       log("transfer failed " + result.toString());
@@ -185,12 +186,12 @@ class Account {
     List<int> path = List();
     path.add(RESOURCE_TAG);
 
-    var hash = lcsHash(structTag.lcsSerialize(), "LIBRA::StructTag");
+    var hash = lcsHash(structTag.bcsSerialize(), "STARCOIN::StructTag");
     path.addAll(hash);
 
-    AccessPath accessPath = AccessPath(sender, Bytes(Uint8List.fromList(path)));
+    AccessPath accessPath = AccessPath(sender, DataPathResourceItem(structTag));
     var result = await client.makeRPCCall(
-        'state_hex.get', [Helpers.byteToHex(accessPath.lcsSerialize())]);
+        'state_hex.get', [Helpers.byteToHex(accessPath.bcsSerialize())]);
 
     if (result == null) {
       return 0;
@@ -199,7 +200,7 @@ class Account {
     for (var i in result) {
       listInt.add(i);
     }
-    var resource = AccountResource.lcsDeserialize(Uint8List.fromList(listInt));
+    var resource = AccountResource.bcsDeserialize(Uint8List.fromList(listInt));
     return resource.sequence_number;
   }
 

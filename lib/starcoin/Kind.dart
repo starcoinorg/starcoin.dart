@@ -22,14 +22,14 @@ abstract class Kind {
     }
   }
 
-  Uint8List lcsSerialize() {
-    var serializer = new LcsSerializer();
+  Uint8List bcsSerialize() {
+    var serializer = new BcsSerializer();
     serialize(serializer);
     return serializer.get_bytes();
   }
 
-  static Kind lcsDeserialize(Uint8List input) {
-    var deserializer = new LcsDeserializer(input);
+  static Kind bcsDeserialize(Uint8List input) {
+    var deserializer = new BcsDeserializer(input);
     Kind value = deserialize(deserializer);
     if (deserializer.get_buffer_offset() < input.length) {
       throw new Exception("Some input bytes were not read");
@@ -37,7 +37,7 @@ abstract class Kind {
     return value;
   }
 
-  static Kind fromJson(Map<String, dynamic> json) {
+  static Kind fromJson(dynamic json) {
     final type = json['type'] as int;
     switch (type) {
       case 0:
@@ -53,7 +53,7 @@ abstract class Kind {
     }
   }
 
-  Map<String, dynamic> toJson();
+  dynamic toJson();
 }
 
 class KindNewHeadsItem extends Kind {
@@ -79,9 +79,9 @@ class KindNewHeadsItem extends Kind {
     return value;
   }
 
-  KindNewHeadsItem.loadJson(Map<String, dynamic> json);
+  KindNewHeadsItem.loadJson(dynamic json);
 
-  Map<String, dynamic> toJson() => {"type": 0, "type_name": "newHeads"};
+  dynamic toJson() => {"type": 0, "type_name": "newHeads"};
 }
 
 class KindEventsItem extends Kind {
@@ -107,9 +107,9 @@ class KindEventsItem extends Kind {
     return value;
   }
 
-  KindEventsItem.loadJson(Map<String, dynamic> json);
+  KindEventsItem.loadJson(dynamic json);
 
-  Map<String, dynamic> toJson() => {"type": 1, "type_name": "events"};
+  dynamic toJson() => {"type": 1, "type_name": "events"};
 }
 
 class KindNewPendingTransactionsItem extends Kind {
@@ -135,10 +135,9 @@ class KindNewPendingTransactionsItem extends Kind {
     return value;
   }
 
-  KindNewPendingTransactionsItem.loadJson(Map<String, dynamic> json);
+  KindNewPendingTransactionsItem.loadJson(dynamic json);
 
-  Map<String, dynamic> toJson() =>
-      {"type": 2, "type_name": "newPendingTransactions"};
+  dynamic toJson() => {"type": 2, "type_name": "newPendingTransactions"};
 }
 
 class KindNewMintBlockItem extends Kind {
@@ -164,7 +163,7 @@ class KindNewMintBlockItem extends Kind {
     return value;
   }
 
-  KindNewMintBlockItem.loadJson(Map<String, dynamic> json);
+  KindNewMintBlockItem.loadJson(dynamic json);
 
-  Map<String, dynamic> toJson() => {"type": 3, "type_name": "newMintBlock"};
+  dynamic toJson() => {"type": 3, "type_name": "newMintBlock"};
 }
