@@ -117,6 +117,50 @@ class WalletClient {
 
     return listInt;
   }
+
+  Future<List<int>> getStateJson(AccountAddress sender, DataPath path) async {
+    final jsonRpc = StarcoinClient(url, Client());
+    //"$address/1/$address::Account::Balance<0x00000000000000000000000000000001::STC::STC>";
+
+    final result = await jsonRpc
+        .makeRPCCall('state.get', [formatAccessPath(sender, path)]);
+
+    if (result == null) {
+      return null;
+    }
+
+    final listInt = List<int>();
+    for (var i in result) {
+      listInt.add(i);
+    }
+
+    return listInt;
+  }
+
+  String formatAccessPath(AccountAddress sender, DataPath path) {
+    var accessPath = sender.toString();
+    if (path is DataPathCodeItem) {
+      accessPath += "/0";
+      accessPath += "/" + path.value.value;
+    }
+    if (path is DataPathResourceItem) {
+      accessPath += "/1";
+      accessPath += "/" + path.value.address.toString();
+      accessPath += "::" + path.value.module.value;
+      accessPath += "::" + path.value.name.value;
+      if (path.value.type_params != null && path.value.type_params.isNotEmpty) {
+        for (TypeTag tag in path.value.type_params) {
+          if (tag is TypeTagStructItem) {
+            accessPath += "<" + tag.value.address.toString();
+            accessPath += "::" + tag.value.module.value;
+            accessPath += "::" + tag.value.name.value + ">";
+          }
+        }
+      }
+    }
+    print("accessPath is $accessPath");
+    return accessPath;
+  }
 }
 
 class BatchClient {

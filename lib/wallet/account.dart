@@ -106,7 +106,7 @@ class Account {
     final client = WalletClient(url);
 
     final sender = AccountAddress(this.keyPair.getAddressBytes());
-    return await client.getState(sender, path);
+    return await client.getStateJson(sender, path);
   }
 
   Future<SubmitTransactionResult> sendTransaction(

@@ -54,6 +54,6 @@ class AccountAddress {
   String toJson() => HEX.encode(value);
 
   String toString() {
-    return "Ox" + HEX.encode(value);
+    return "0x" + HEX.encode(value);
   }
 }
