@@ -146,12 +146,75 @@ class Account {
     final result = await client.makeRPCCall('txpool.submit_hex_transaction',
         [Helpers.byteToHex(signedTxn.bcsSerialize())]);
 
-    if (result == null) {
+    if (result.toString().substring(2) == txnHash) {
       return SubmitTransactionResult(true, txnHash);
     } else {
       log("transfer failed " + result.toString());
       return SubmitTransactionResult(false, txnHash);
     }
+  }
+
+  Future<dynamic> getAccountStateSet(
+    String url,
+  ) async {
+    final client = StarcoinClient(url, Client());
+
+    final sender = AccountAddress(this.keyPair.getAddressBytes());
+
+    final result =
+        await client.makeRPCCall('state.get_account_state_set', [sender]);
+
+    return result;
+  }
+
+  Future<dynamic> getAccountToken(
+    String url,
+  ) async {
+    final accountStateSet = await getAccountStateSet(url);
+
+    final result = List();
+    if (accountStateSet != null) {
+      final resources = accountStateSet['resources'];
+      for (var k in resources.keys) {
+        if (k.toString().contains("Balance")) {
+          final keyString = k.toString();
+          final key = parseKeyToSructTag(keyString);
+          final value = resources[k]['value'][0] as List;
+          final balance = this.parseBalance(value);
+          result.add({key: balance});
+        }
+      }
+    }
+    return result;
+  }
+
+  BigInt parseBalance(List value) {
+    for (var item in value) {
+      if (item is Map) {
+        final balanceValue = item['Struct']['value'][0];
+        for (var balance in balanceValue) {
+          if (balance is Map) {
+            return BigInt.parse(balance['U128']);
+          }
+        }
+      }
+    }
+    throw new Exception("can't parse balance");
+  }
+
+  StructTag parseKeyToSructTag(String key) {
+    final tokens = key.split("::");
+    if (tokens.length == 5) {
+      final address = AccountAddress.fromHex(tokens[0]);
+      final tokenThreeTokens = tokens[2].split("<");
+      final paramStruct = StructTag(AccountAddress.fromHex(tokenThreeTokens[1]),
+          Identifier(tokens[3]), Identifier(tokens[4].replaceAll(">", "")), []);
+      final params = TypeTagStructItem(paramStruct);
+      final result = StructTag(address, Identifier(tokens[1]),
+          Identifier(tokenThreeTokens[0]), [params]);
+      return result;
+    }
+    return null;
   }
 
   Future<SubmitTransactionResult> transferSTC(
@@ -174,24 +237,13 @@ class Account {
   }
 
   Future<int> getSeq(String url) async {
-    final client = StarcoinClient(url, Client());
-
-    AccountAddress sender = AccountAddress(this.keyPair.getAddressBytes());
-
     var structTag = StructTag(
         AccountAddress(Helpers.hexToBytes("00000000000000000000000000000001")),
         Identifier("Account"),
         Identifier("Account"),
         List());
-    List<int> path = List();
-    path.add(RESOURCE_TAG);
 
-    var hash = lcsHash(structTag.bcsSerialize(), "STARCOIN::StructTag");
-    path.addAll(hash);
-
-    AccessPath accessPath = AccessPath(sender, DataPathResourceItem(structTag));
-    var result = await client.makeRPCCall(
-        'state_hex.get', [Helpers.byteToHex(accessPath.bcsSerialize())]);
+    final result = await this.getState(url, DataPathResourceItem(structTag));
 
     if (result == null) {
       return 0;

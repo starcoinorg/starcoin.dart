@@ -158,7 +158,6 @@ class WalletClient {
         }
       }
     }
-    print("accessPath is $accessPath");
     return accessPath;
   }
 }

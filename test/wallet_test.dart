@@ -188,6 +188,30 @@ void main() {
       final txn = await walletClient.getTransactionInfo(result.txnHash);
       print("txn_info is $txn");
     }
+
+    final accountStateSet = await account.getAccountStateSet(URL);
+    if (accountStateSet != null) {
+      final resources = accountStateSet['resources'];
+      for (var k in resources.keys) {
+        if (k.toString().contains("Balance")) {
+          final value = resources[k]['value'][0] as List;
+          for (var item in value) {
+            if (item is Map) {
+              final balanceValue = item['Struct']['value'][0];
+              for (var balance in balanceValue) {
+                if (balance is Map) {
+                  print(BigInt.parse(balance['U128']));
+                }
+              }
+            }
+          }
+          print("Key : $k, value : ${value}");
+        }
+      }
+    }
+
+    final tokenList = await account.getAccountToken(URL);
+    print("tokenList is $tokenList");
   });
 
   test('sub', () async {
