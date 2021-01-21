@@ -16,21 +16,30 @@ const RESOURCE_TAG = 1;
 const SENDSALT = 0;
 const RECVSALT = 1;
 
+class TokenBalance {
+  StructTag token;
+  BigInt balance;
+
+  TokenBalance(this.balance, this.token);
+}
+
 class AccountState {
   BigInt balance, sequenceNumber;
   String address;
   String publicKey;
+  List<TokenBalance> assets;
 
-  AccountState({
-    BigInt balance,
-    BigInt sequenceNumber,
-    String address,
-    String publicKey,
-  }) {
+  AccountState(
+      {BigInt balance,
+      BigInt sequenceNumber,
+      String address,
+      String publicKey,
+      List<TokenBalance> assets}) {
     this.balance = balance == null ? BigInt.zero : balance;
     this.sequenceNumber = sequenceNumber == null ? BigInt.zero : sequenceNumber;
     this.address = address;
     this.publicKey = publicKey;
+    this.assets = assets;
   }
 }
 
@@ -167,21 +176,21 @@ class Account {
     return result;
   }
 
-  Future<dynamic> getAccountToken(
+  Future<List<TokenBalance>> getAccountToken(
     String url,
   ) async {
     final accountStateSet = await getAccountStateSet(url);
 
-    final result = List();
+    final result = List<TokenBalance>();
     if (accountStateSet != null) {
       final resources = accountStateSet['resources'];
       for (var k in resources.keys) {
         if (k.toString().contains("Balance")) {
           final keyString = k.toString();
-          final key = parseKeyToSructTag(keyString);
+          final token = parseKeyToSructTag(keyString);
           final value = resources[k]['value'][0] as List;
           final balance = this.parseBalance(value);
-          result.add({key: balance});
+          result.add(TokenBalance(balance, token));
         }
       }
     }
