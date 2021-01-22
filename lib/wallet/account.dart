@@ -238,6 +238,11 @@ class Account {
         Identifier("STC"),
         List());
 
+    return await transferToken(url, amount, reciever, publicKey, structTag);
+  }
+
+  Future<SubmitTransactionResult> transferToken(String url, Int128 amount,
+      AccountAddress reciever, Bytes publicKey, StructTag structTag) async {
     var transferScript = TransactionBuilder.encode_peer_to_peer_script(
         TypeTagStructItem(structTag), reciever, publicKey, amount);
 
