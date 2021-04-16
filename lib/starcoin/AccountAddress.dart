@@ -4,42 +4,41 @@ class AccountAddress {
   List<int> value;
 
   AccountAddress(List<int> value) {
-    assert(value != null);
+    assert (value != null);
     this.value = value;
   }
 
-  void serialize(BinarySerializer serializer) {
+  void serialize(BinarySerializer serializer){
     TraitHelpers.serialize_array16_u8_array(value, serializer);
   }
 
   Uint8List bcsSerialize() {
-    var serializer = new BcsSerializer();
-    serialize(serializer);
-    return serializer.get_bytes();
+      var serializer = new BcsSerializer();
+      serialize(serializer);
+      return serializer.get_bytes();
   }
 
-  static AccountAddress deserialize(BinaryDeserializer deserializer) {
+  static AccountAddress deserialize(BinaryDeserializer deserializer){
     var value = TraitHelpers.deserialize_array16_u8_array(deserializer);
     return new AccountAddress(value);
   }
 
-  static AccountAddress bcsDeserialize(Uint8List input) {
-    var deserializer = new BcsDeserializer(input);
-    AccountAddress value = deserialize(deserializer);
-    if (deserializer.get_buffer_offset() < input.length) {
-      throw new Exception("Some input bytes were not read");
-    }
-    return value;
+  static AccountAddress bcsDeserialize(Uint8List input)  {
+     var deserializer = new BcsDeserializer(input);
+      AccountAddress value = deserialize(deserializer);
+      if (deserializer.get_buffer_offset() < input.length) {
+           throw new Exception("Some input bytes were not read");
+      }
+      return value;
   }
 
   @override
   bool operator ==(covariant AccountAddress other) {
     if (other == null) return false;
 
-    if (isListsEqual(this.value, other.value)) {
-      return true;
-    } else
-      return false;
+    if (  isListsEqual(this.value , other.value)  ){
+    return true;}
+    else return false;
   }
 
   @override
@@ -59,4 +58,5 @@ class AccountAddress {
   String toString() {
     return "0x" + HEX.encode(value);
   }
+
 }

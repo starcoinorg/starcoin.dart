@@ -10,6 +10,7 @@ abstract class TransactionPayload {
     switch (index) {
       case 0: return TransactionPayloadScriptItem.load(deserializer);
       case 1: return TransactionPayloadPackageItem.load(deserializer);
+      case 2: return TransactionPayloadScriptFunctionItem.load(deserializer);
       default: throw new Exception("Unknown variant index for TransactionPayload: " + index.toString());
     }
   }
@@ -34,6 +35,7 @@ abstract class TransactionPayload {
     switch (type) {
       case 0: return TransactionPayloadScriptItem.loadJson(json);
       case 1: return TransactionPayloadPackageItem.loadJson(json);
+      case 2: return TransactionPayloadScriptFunctionItem.loadJson(json);
       default: throw new Exception("Unknown type for TransactionPayload: " + type.toString());
     }
   }
@@ -127,5 +129,49 @@ class TransactionPayloadPackageItem extends TransactionPayload {
     "value" : value.toJson() ,
     "type" : 1,
     "type_name" : "Package"
+  };
+}
+
+class TransactionPayloadScriptFunctionItem extends TransactionPayload {
+  ScriptFunction value;
+
+  TransactionPayloadScriptFunctionItem(ScriptFunction value) {
+    assert (value != null);
+    this.value = value;
+  }
+
+  void serialize(BinarySerializer serializer){
+    serializer.serialize_variant_index(2);
+    value.serialize(serializer);
+  }
+
+  static TransactionPayloadScriptFunctionItem load(BinaryDeserializer deserializer){
+    var value = ScriptFunction.deserialize(deserializer);
+    return new TransactionPayloadScriptFunctionItem(value);
+  }
+
+  @override
+  bool operator ==(covariant TransactionPayloadScriptFunctionItem other) {
+    if (other == null) return false;
+
+    if (  this.value == other.value  ){
+    return true;}
+    else return false;
+  }
+
+  @override
+  int get hashCode {
+    int value = 7;
+    value = 31 * value + (this.value != null ? this.value.hashCode : 0);
+    return value;
+  }
+
+  TransactionPayloadScriptFunctionItem.loadJson(dynamic json) :
+    value = ScriptFunction.fromJson(json['value']) ;
+
+  dynamic toJson() => {
+    "value" : value.toJson() ,
+    "type" : 2,
+    "type_name" : "ScriptFunction"
   };
 }

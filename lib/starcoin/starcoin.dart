@@ -1,11 +1,12 @@
 library starcoin_types;
 
+import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:optional/optional.dart';
 import 'package:tuple/tuple.dart';
 import 'package:hex/hex.dart';
-import 'package:starcoin_wallet/serde/serde.dart';
-import 'package:starcoin_wallet/bcs/bcs.dart';
+import '../serde/serde.dart';
+import '../bcs/bcs.dart';
 
 part 'TraitHelpers.dart';
 part 'AccessPath.dart';
@@ -31,11 +32,13 @@ part 'KeyRotationCapabilityResource.dart';
 part 'Kind.dart';
 part 'Metadata.dart';
 part 'Module.dart';
+part 'ModuleId.dart';
 part 'MultiEd25519PublicKey.dart';
 part 'MultiEd25519Signature.dart';
 part 'Package.dart';
 part 'RawTransaction.dart';
 part 'Script.dart';
+part 'ScriptFunction.dart';
 part 'SignedUserTransaction.dart';
 part 'StructTag.dart';
 part 'Transaction.dart';

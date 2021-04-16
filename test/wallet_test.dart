@@ -69,15 +69,12 @@ void main() {
     List<int> path = List();
     path.add(RESOURCE_TAG);
 
-    var hash = lcsHash(struct_tag.bcsSerialize(), "LIBRA::StructTag");
+    var hash = lcsHash(struct_tag.bcsSerialize(), "STARCOIN::StructTag");
     path.addAll(hash);
 
-    //var hex_access_path = Helpers.byteToHex(Uint8List.fromList(path));
-    //print("hash is " + hex_access_path);
-    AccessPath accessPath =
-        AccessPath(sender, DataPathResourceItem(struct_tag));
-    var result = await client.sendRequest(
-        'state_hex.get', [Helpers.byteToHex(accessPath.bcsSerialize())]);
+    final walletClient = new WalletClient(URL);
+    var result = await walletClient.getStateJson(
+        sender, DataPathResourceItem(struct_tag));
 
     var list_int = List<int>();
     for (var i in result) {
@@ -106,9 +103,9 @@ void main() {
 
     //var hex_access_path = Helpers.byteToHex(Uint8List.fromList(path));
     //print("hash is " + hex_access_path);
-    accessPath = AccessPath(sender, DataPathResourceItem(struct_tag));
-    result = await client.sendRequest(
-        'state_hex.get', [Helpers.byteToHex(accessPath.bcsSerialize())]);
+    //var accessPath = AccessPath(sender, DataPathResourceItem(struct_tag));
+    result = await walletClient.getStateJson(
+        sender, DataPathResourceItem(struct_tag));
     list_int = List<int>();
     for (var i in result) {
       list_int.add(i);
@@ -117,23 +114,26 @@ void main() {
         BalanceResource.bcsDeserialize(Uint8List.fromList(list_int));
     print("balance is " + balanceResource.token.low.toString());
 
-    var empty_script = TransactionBuilder.encode_empty_script_script();
+    //var empty_script = TransactionBuilder.en();
     struct_tag = StructTag(
         AccountAddress(Helpers.hexToBytes("00000000000000000000000000000001")),
         Identifier("STC"),
         Identifier("STC"),
         List());
-    var transfer_script = TransactionBuilder.encode_peer_to_peer_script(
+    var transfer_script = TransactionBuilder.encode_peer_to_peer_script_function(
         TypeTagStructItem(struct_tag),
         AccountAddress(
             (Helpers.hexToBytes("703038dffdf4db03ad11fc75cfdec595"))),
-        Bytes(Helpers.hexToBytes("703038dffdf4db03ad11fc75cfdec595")),
+        Bytes(Helpers.hexToBytes("826cf2fd51e9fa87378d385c347599f609457b466bcb97d81e22608247440c8f")),
         Int128(0, 200));
+    var payload_bytes = transfer_script.bcsSerialize();
+    print("payload is "+Helpers.byteToHex(payload_bytes));  
+
 
     RawTransaction raw_txn = RawTransaction(
         sender,
         resource.sequence_number,
-        TransactionPayloadScriptItem(transfer_script),
+        transfer_script,
         20000,
         1,
         "0x1::STC::STC",
@@ -141,7 +141,7 @@ void main() {
         ChainId(254));
 
     var raw_txn_bytes = raw_txn.bcsSerialize();
-
+    print("txn is "+Helpers.byteToHex(raw_txn_bytes));  
     print("txn hash is " + Helpers.byteToHex(rawHash(raw_txn_bytes)));
 
     var sign_bytes = account.keyPair
@@ -156,9 +156,9 @@ void main() {
 
     SignedUserTransaction signed_txn = SignedUserTransaction(raw_txn, author);
 
-    result = await client.sendRequest('txpool.submit_hex_transaction',
+    var res = await client.sendRequest('txpool.submit_hex_transaction',
         [Helpers.byteToHex(signed_txn.bcsSerialize())]);
-    print('result is $result');
+    print('result is $res');
   });
 
   test('Account', () async {
@@ -172,9 +172,12 @@ void main() {
 
     final result = await account.transferSTC(
         URL,
-        Int128(0, 200),
+        Int128(0, 20000),
         AccountAddress(reciever.keyPair.getAddressBytes()),
-        Bytes(reciever.keyPair.getPublicKey()));
+        Bytes(reciever.keyPair.getPublicAuthKey()));
+    print("reciever address is "+reciever.keyPair.getAddress());
+    print("reciever public key is "+reciever.keyPair.getPublicAuthKey().toString());
+    print("reciever private key is "+reciever.keyPair.getPrivateKeyHex());
     print("result is $result");
 
     await Future.delayed(Duration(seconds: 5));

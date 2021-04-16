@@ -1,21 +1,25 @@
 part of starcoin_types;
 
-class Script {
-  Bytes code;
+class ScriptFunction {
+  ModuleId module;
+  Identifier function;
   List<TypeTag> ty_args;
   List<Uint8List> args;
 
-  Script(Bytes code, List<TypeTag> ty_args, List<Uint8List> args) {
-    assert (code != null);
+  ScriptFunction(ModuleId module, Identifier function, List<TypeTag> ty_args, List<Uint8List> args) {
+    assert (module != null);
+    assert (function != null);
     assert (ty_args != null);
     assert (args != null);
-    this.code = code;
+    this.module = module;
+    this.function = function;
     this.ty_args = ty_args;
     this.args = args;
   }
 
   void serialize(BinarySerializer serializer){
-    serializer.serialize_bytes(code);
+    module.serialize(serializer);
+    function.serialize(serializer);
     TraitHelpers.serialize_vector_TypeTag(ty_args, serializer);
     TraitHelpers.serialize_vector_bytes(args, serializer);
   }
@@ -26,16 +30,17 @@ class Script {
       return serializer.get_bytes();
   }
 
-  static Script deserialize(BinaryDeserializer deserializer){
-    var code = deserializer.deserialize_bytes();
+  static ScriptFunction deserialize(BinaryDeserializer deserializer){
+    var module = ModuleId.deserialize(deserializer);
+    var function = Identifier.deserialize(deserializer);
     var ty_args = TraitHelpers.deserialize_vector_TypeTag(deserializer);
     var args = TraitHelpers.deserialize_vector_bytes(deserializer);
-    return new Script(code,ty_args,args);
+    return new ScriptFunction(module,function,ty_args,args);
   }
 
-  static Script bcsDeserialize(Uint8List input)  {
+  static ScriptFunction bcsDeserialize(Uint8List input)  {
      var deserializer = new BcsDeserializer(input);
-      Script value = deserialize(deserializer);
+      ScriptFunction value = deserialize(deserializer);
       if (deserializer.get_buffer_offset() < input.length) {
            throw new Exception("Some input bytes were not read");
       }
@@ -43,10 +48,11 @@ class Script {
   }
 
   @override
-  bool operator ==(covariant Script other) {
+  bool operator ==(covariant ScriptFunction other) {
     if (other == null) return false;
 
-    if (  this.code == other.code  &&
+    if (  this.module == other.module  &&
+      this.function == other.function  &&
       isListsEqual(this.ty_args , other.ty_args)  &&
       isListsEqual(this.args , other.args)  ){
     return true;}
@@ -56,19 +62,22 @@ class Script {
   @override
   int get hashCode {
     int value = 7;
-    value = 31 * value + (this.code != null ? this.code.hashCode : 0);
+    value = 31 * value + (this.module != null ? this.module.hashCode : 0);
+    value = 31 * value + (this.function != null ? this.function.hashCode : 0);
     value = 31 * value + (this.ty_args != null ? this.ty_args.hashCode : 0);
     value = 31 * value + (this.args != null ? this.args.hashCode : 0);
     return value;
   }
 
-  Script.fromJson(dynamic json) :
-    code = Bytes.fromJson(json['code']) ,
+  ScriptFunction.fromJson(dynamic json) :
+    module = ModuleId.fromJson(json['module']) ,
+    function = Identifier.fromJson(json['function']) ,
     ty_args = List<TypeTag>.from(json['ty_args'].map((f) => TypeTag.fromJson(f)).toList()) ,
     args = List<Uint8List>.from(json['args'].map((f) => Bytes.fromJson(f)).toList()) ;
 
   dynamic toJson() => {
-    "code" : code.toJson() ,
+    "module" : module.toJson() ,
+    "function" : function.toJson() ,
     'ty_args' : ty_args.map((f) => f.toJson()).toList(),
     'args' : args.map((f) => f).toList(),
   };

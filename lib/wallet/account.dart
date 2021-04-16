@@ -124,13 +124,14 @@ class Account {
     final client = StarcoinClient(url, Client());
 
     final nodeInfoResult = await client.makeRPCCall('node.info');
+
     if (nodeInfoResult is Error || nodeInfoResult is Exception)
       throw nodeInfoResult;
 
     final seq = await getSeq(url);
 
-    RawTransaction rawTxn = RawTransaction(sender, seq, payload, 20000, 1,
-        "0x1::STC::STC", nodeInfoResult['now_seconds'] + 40000, ChainId(254));
+    RawTransaction rawTxn = RawTransaction(sender, seq, payload, 20000000, 1,
+        "0x1::STC::STC", nodeInfoResult['now_seconds'] + 40000, ChainId(nodeInfoResult['peer_info']['chain_info']['head']['chain_id']));
 
     var rawTxnBytes = rawTxn.bcsSerialize();
 
@@ -243,11 +244,11 @@ class Account {
 
   Future<SubmitTransactionResult> transferToken(String url, Int128 amount,
       AccountAddress reciever, Bytes publicKey, StructTag structTag) async {
-    var transferScript = TransactionBuilder.encode_peer_to_peer_script(
+    var transferScript = TransactionBuilder.encode_peer_to_peer_script_function(
         TypeTagStructItem(structTag), reciever, publicKey, amount);
 
     return await sendTransaction(
-        url, TransactionPayloadScriptItem(transferScript));
+        url, transferScript);
   }
 
   Future<int> getSeq(String url) async {

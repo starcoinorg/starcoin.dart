@@ -117,6 +117,22 @@ class TraitHelpers {
     );
   }
 
+  static void serialize_vector_bytes(List<Uint8List> value, BinarySerializer serializer) {
+    serializer.serialize_len(value.length);
+    for (Uint8List item in value) {
+      serializer.serialize_uint8list(item);
+    }
+  }
+
+  static List<Uint8List> deserialize_vector_bytes(BinaryDeserializer deserializer) {
+    int length = deserializer.deserialize_len();
+    List<Uint8List> obj = new List(length);
+    for (int i = 0; i < length; i++) {      
+        obj[i]= deserializer.deserialize_uint8list();
+    }
+    return obj;
+  }
+
   static void serialize_vector_ContractEvent(List<ContractEvent> value, BinarySerializer serializer) {
     serializer.serialize_len(value.length);
     for (ContractEvent item in value) {
@@ -161,22 +177,6 @@ class TraitHelpers {
     List<Module> obj = new List<Module>(length);
     for (int i = 0; i < length; i++) {
         obj[i]=Module.deserialize(deserializer);
-    }
-    return obj;
-  }
-
-  static void serialize_vector_TransactionArgument(List<TransactionArgument> value, BinarySerializer serializer) {
-    serializer.serialize_len(value.length);
-    for (TransactionArgument item in value) {
-        item.serialize(serializer);
-    }
-  }
-
-  static List<TransactionArgument> deserialize_vector_TransactionArgument(BinaryDeserializer deserializer) {
-    int length = deserializer.deserialize_len();
-    List<TransactionArgument> obj = new List<TransactionArgument>(length);
-    for (int i = 0; i < length; i++) {
-        obj[i]=TransactionArgument.deserialize(deserializer);
     }
     return obj;
   }

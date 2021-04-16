@@ -33,6 +33,13 @@ class KeyPair {
     //return ed25519_dart.publicKey(_privateKey);
   }
 
+  Uint8List getPublicAuthKey() {
+    var k = SHA3(256, SHA3_PADDING, 256);
+    k.update(_publicKey);
+    var hash = k.digest();
+    return Uint8List.fromList(hash);
+  }
+
   String getPublicKeyHex() {
     return Helpers.byteToHex(getPublicKey());
   }
