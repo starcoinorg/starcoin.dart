@@ -175,7 +175,7 @@ void main() {
         Int128(0, 20000),
         AccountAddress(reciever.keyPair.getAddressBytes()),
         Bytes(reciever.keyPair.getPublicAuthKey()));
-    print("reciever address is "+reciever.keyPair.getAddress());
+    print("reciever address is "+reciever.keyPair.getAddressBytes().toString());
     print("reciever public key is "+reciever.keyPair.getPublicAuthKey().toString());
     print("reciever private key is "+reciever.keyPair.getPrivateKeyHex());
     print("result is $result");

@@ -34,8 +34,12 @@ class KeyPair {
   }
 
   Uint8List getPublicAuthKey() {
+    List<int> key = new List();
+    key.addAll(_publicKey);
+    key.add(0);
+
     var k = SHA3(256, SHA3_PADDING, 256);
-    k.update(_publicKey);
+    k.update(key);    
     var hash = k.digest();
     return Uint8List.fromList(hash);
   }
