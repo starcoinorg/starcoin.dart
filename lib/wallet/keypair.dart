@@ -16,7 +16,7 @@ class KeyPair {
     return Helpers.byteToHex(address_bytes);
   }
 
-  static getAddressFromPublicKey(String hexedPk){
+  static String getAddressFromPublicKey(String hexedPk){
     final bytespk=Helpers.hexToBytes(hexedPk);
 
     List<int> key = new List();
@@ -26,7 +26,9 @@ class KeyPair {
     var k = SHA3(256, SHA3_PADDING, 256);
     k.update(key);
     var hash = k.digest();
-    return hash.sublist(16, 32);
+
+    var address_bytes = Uint8List.fromList(hash.sublist(16, 32));
+    return Helpers.byteToHex(address_bytes);
   }
 
   List<int> getAddressBytes() {
