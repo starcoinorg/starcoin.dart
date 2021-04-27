@@ -16,6 +16,19 @@ class KeyPair {
     return Helpers.byteToHex(address_bytes);
   }
 
+  static getAddressFromPublicKey(String hexedPk){
+    final bytespk=Helpers.hexToBytes(hexedPk);
+
+    List<int> key = new List();
+    key.addAll(bytespk);
+    key.add(0);
+
+    var k = SHA3(256, SHA3_PADDING, 256);
+    k.update(key);
+    var hash = k.digest();
+    return hash.sublist(16, 32);
+  }
+
   List<int> getAddressBytes() {
     //Uint8List publicKey = ed25519_dart.publicKey(_privateKey);
     List<int> key = new List();

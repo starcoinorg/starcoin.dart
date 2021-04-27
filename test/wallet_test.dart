@@ -214,7 +214,50 @@ void main() {
     }
 
     final tokenList = await account.getAccountToken(URL);
-    print("tokenList is $tokenList");
+    if(tokenList.length>0){
+    final result = await account.transferToken(
+        URL,
+        Int128(0, 20000),
+        AccountAddress(reciever.keyPair.getAddressBytes()),
+        Bytes(reciever.keyPair.getPublicAuthKey()),
+        tokenList[0].token
+        );        
+    }
+  });
+
+  test('Account Transfer Token', () async {
+    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
+    final walletClient = new WalletClient(URL);
+    Account account = wallet.newAccount();
+    Account reciever = wallet.newAccount();
+
+    final balance = await account.balanceOfStc(URL);
+    print("balance is " + balance.low.toString());
+
+    final tokenList = await account.getAccountToken(URL);
+    if(tokenList.length>0){      
+      var sruct_tag=tokenList[0].token.type_params[0] as TypeTagStructItem;
+      final result = await account.transferToken(
+        URL,
+        Int128(0, 20000),
+        AccountAddress(reciever.keyPair.getAddressBytes()),
+        Bytes(reciever.keyPair.getPublicAuthKey()),
+        sruct_tag.value
+        );        
+    
+      await Future.delayed(Duration(seconds: 5));
+
+      if (result.result == true) {
+        final txn = await walletClient.getTransaction(result.txnHash);
+        print("txn is $txn");
+      }
+
+      if (result.result == true) {
+        final txn = await walletClient.getTransactionInfo(result.txnHash);
+        print("txn_info is $txn");
+      }
+    
+    }
   });
 
   test('sub', () async {

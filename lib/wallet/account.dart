@@ -20,7 +20,7 @@ class TokenBalance {
   StructTag token;
   BigInt balance;
 
-  TokenBalance(this.balance, this.token);
+  TokenBalance(this.balance, this.token);  
 }
 
 class AccountState {
@@ -244,6 +244,7 @@ class Account {
 
   Future<SubmitTransactionResult> transferToken(String url, Int128 amount,
       AccountAddress reciever, Bytes publicKey, StructTag structTag) async {
+
     var transferScript = TransactionBuilder.encode_peer_to_peer_script_function(
         TypeTagStructItem(structTag), reciever, publicKey, amount);
 
