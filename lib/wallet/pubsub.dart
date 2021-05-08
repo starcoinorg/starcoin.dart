@@ -6,7 +6,6 @@ import 'dart:async';
 import 'package:stream_channel/stream_channel.dart';
 import 'dart:developer';
 import 'package:optional/optional.dart';
-import 'package:web_socket_channel/status.dart' as status;
 
 const _pingDuration = Duration(seconds: 2);
 
