@@ -116,7 +116,7 @@ class Account {
   }
 
   Future<List<int>> getState(DataPath path) async {
-    final client = WalletClient(hostMananger.getHttpBaseUrl());
+    final client = WalletClient(hostMananger);
 
     final sender = AccountAddress(this.keyPair.getAddressBytes());
     return await client.getStateJson(sender, path);
@@ -125,7 +125,7 @@ class Account {
   Future<SubmitTransactionResult> sendTransaction(
       TransactionPayload payload) async {
     AccountAddress sender = AccountAddress(this.keyPair.getAddressBytes());
-    final client = StarcoinClient(hostMananger.getHttpBaseUrl(), Client());
+    final client = StarcoinClient(hostMananger);
 
     final nodeInfoResult = await client.makeRPCCall('node.info');
 
@@ -170,7 +170,7 @@ class Account {
 
   Future<dynamic> getAccountStateSet(
   ) async {
-    final client = StarcoinClient(hostMananger.getHttpBaseUrl(), Client());
+    final client = StarcoinClient(hostMananger);
 
     final sender = AccountAddress(this.keyPair.getAddressBytes());
 

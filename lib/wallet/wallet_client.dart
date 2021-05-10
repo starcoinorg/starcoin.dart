@@ -1,6 +1,3 @@
-import 'dart:typed_data';
-
-import 'package:starcoin_wallet/serde/serde.dart';
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/wallet/account.dart';
 import 'package:starcoin_wallet/wallet/client.dart';
@@ -8,6 +5,8 @@ import 'package:http/http.dart';
 import 'package:optional/optional.dart';
 import 'package:starcoin_wallet/wallet/helper.dart';
 import 'package:web_socket_channel/io.dart';
+
+import 'host_manager.dart';
 
 enum EventType {
   Deposit,
@@ -24,31 +23,36 @@ class TransactionWithInfo {
 }
 
 class WalletClient {
-  final String url;
 
-  WalletClient(this.url);
+  WalletClient(this.hostMananger);
+
+  HostMananger hostMananger;
+
+  void setHostManager(HostMananger hostMananger){
+    this.hostMananger;
+  }
 
   Future<dynamic> getNodeInfo() async {
-    final client = StarcoinClient(url, Client());
+    final client = StarcoinClient(this.hostMananger);
     final result = await client.makeRPCCall('node.info');
     return result;
   }
 
   Future<dynamic> getTransaction(String hash) async {
-    final client = StarcoinClient(url, Client());
+    final client = StarcoinClient(this.hostMananger);
     final result = await client.makeRPCCall('chain.get_transaction', [hash]);
     return result;
   }
 
   Future<dynamic> getTransactionInfo(String hash) async {
-    final client = StarcoinClient(url, Client());
+    final client = StarcoinClient(this.hostMananger);
     final result =
         await client.makeRPCCall('chain.get_transaction_info', [hash]);
     return result;
   }
 
   Future<dynamic> getBlockByHash(String hash) async {
-    final client = StarcoinClient(url, Client());
+    final client = StarcoinClient(this.hostMananger);
     final result = await client.makeRPCCall('chain.get_block_by_hash', [hash]);
     return result;
   }
@@ -60,7 +64,7 @@ class WalletClient {
   }
 
   Future<dynamic> getEvents(EventFilter eventFilter) async {
-    final client = StarcoinClient(url, Client());
+    final client = StarcoinClient(this.hostMananger);
     final result = await client.makeRPCCall('chain.get_events', [eventFilter]);
     return result;
   }
@@ -99,7 +103,7 @@ class WalletClient {
   }
 
   Future<List<int>> getState(AccountAddress sender, DataPath path) async {
-    final jsonRpc = StarcoinClient(url, Client());
+    final jsonRpc = StarcoinClient(this.hostMananger);
 
     final accessPath = AccessPath(sender, path);
 
@@ -119,7 +123,7 @@ class WalletClient {
   }
 
   Future<List<int>> getStateJson(AccountAddress sender, DataPath path) async {
-    final jsonRpc = StarcoinClient(url, Client());
+    final jsonRpc = StarcoinClient(this.hostMananger);
     //"$address/1/$address::Account::Balance<0x00000000000000000000000000000001::STC::STC>";
 
     final result = await jsonRpc

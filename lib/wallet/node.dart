@@ -9,41 +9,44 @@ import 'package:starcoin_wallet/wallet/hash.dart';
 import 'package:starcoin_wallet/wallet/helper.dart';
 import 'package:starcoin_wallet/wallet/wallet_client.dart';
 
-class Node {
-  final String _url;
+import 'host_manager.dart';
 
-  Node(this._url);
+class Node {
+
+  Node(this.hostMananger);
+
+  HostMananger hostMananger;
 
   Future<dynamic> defaultAccount() async {
-    final client = StarcoinClient(_url, Client());
+    final client = StarcoinClient(hostMananger);
 
     var result = await client.makeRPCCall('account.default', []);
     return result;
   }
 
   Future<dynamic> nodeInfo() async {
-    final client = StarcoinClient(_url, Client());
+    final client = StarcoinClient(this.hostMananger);
 
     var result = await client.makeRPCCall('node.info', []);
     return result;
   }
 
   Future<dynamic> syncStatus() async {
-    final client = StarcoinClient(_url, Client());
+    final client = StarcoinClient(this.hostMananger);
 
     var result = await client.makeRPCCall('sync.status', []);
     return result;
   }
 
   Future<dynamic> syncProgress() async {
-    final client = StarcoinClient(_url, Client());
+    final client = StarcoinClient(this.hostMananger);
 
     var result = await client.makeRPCCall('sync.progress', []);
     return result;
   }
 
   Future<dynamic> exportAccount(String accountAddress, String password) async {
-    final client = StarcoinClient(_url, Client());
+    final client = StarcoinClient(this.hostMananger);
 
     var result =
         await client.makeRPCCall('account.export', [accountAddress, password]);
@@ -73,7 +76,7 @@ class Node {
     final hash = lcsHash(structTag.bcsSerialize(), "STARCOIN::StructTag");
     path.addAll(hash);
 
-    final client = WalletClient(_url);
+    final client = WalletClient(this.hostMananger);
     final result =
         await client.getStateJson(sender, DataPathResourceItem(structTag));
 

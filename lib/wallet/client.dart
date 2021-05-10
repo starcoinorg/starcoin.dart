@@ -1,3 +1,4 @@
+import 'package:starcoin_wallet/wallet/host_manager.dart';
 import 'package:starcoin_wallet/wallet/json_rpc.dart';
 
 import 'package:http/http.dart';
@@ -9,15 +10,20 @@ import 'package:stream_channel/stream_channel.dart';
 import 'package:json_rpc_2/json_rpc_2.dart' as json_rpc;
 
 class StarcoinClient {
-  final JsonRPC _jsonRpc;
+  //final JsonRPC _jsonRpc;
 
   bool printErrors = false;
 
-  StarcoinClient(String url, Client httpClient)
-      : _jsonRpc = JsonRPC(url, httpClient);
+  HostMananger hostMananger;
+
+  StarcoinClient(this.hostMananger);
+  
+  //StarcoinClient(String url, Client httpClient)
+  //    : _jsonRpc = JsonRPC(url, httpClient);      
 
   Future<T> makeRPCCall<T>(String function, [List<dynamic> params]) async {
     try {
+      final _jsonRpc = JsonRPC(hostMananger.getHttpBaseUrl(), Client());
       final data = await _jsonRpc.call(function, params);
       // ignore: only_throw_errors
       if (data is Error || data is Exception) throw data;

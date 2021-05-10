@@ -82,7 +82,7 @@ void main() {
     var hash = lcsHash(struct_tag.bcsSerialize(), "STARCOIN::StructTag");
     path.addAll(hash);
 
-    final walletClient = new WalletClient(URL);
+    final walletClient = new WalletClient(localHostManager());
     var result = await walletClient.getStateJson(
         sender, DataPathResourceItem(struct_tag));
 
@@ -174,7 +174,7 @@ void main() {
   test('Account', () async {
     Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
 
-    final walletClient = new WalletClient(URL);
+    final walletClient = new WalletClient(localHostManager());
     Account account = wallet.newAccount();
     Account reciever = wallet.newAccount();
 
@@ -237,7 +237,7 @@ void main() {
   test('Account Transfer Token', () async {
     Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
 
-    final walletClient = new WalletClient(URL);
+    final walletClient = new WalletClient(localHostManager());
     Account account = wallet.newAccount();
     Account reciever = wallet.newAccount();
 
@@ -273,7 +273,7 @@ void main() {
     var socket = IOWebSocketChannel.connect(Uri.parse('ws://127.0.0.1:9870'));
     var rpc = JsonRPC("http://127.0.0.1:9850", http.Client());
     var client = PubSubClient(socket.cast<String>(), rpc);
-    final walletClient = new WalletClient(URL);
+    final walletClient = new WalletClient(localHostManager());
     Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
 
     final account = wallet.newAccount();
@@ -288,7 +288,7 @@ void main() {
   });
 
   test('node', () async {
-    final node = Node("http://127.0.0.1:9850");
+    final node = Node(localHostManager());
     final result = await node.defaultAccount();
     print(result);
 
@@ -320,7 +320,7 @@ void main() {
   test('events', () async {
     Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
 
-    final walletClient = new WalletClient(URL);
+    final walletClient = new WalletClient(localHostManager());
     final account = wallet.newAccount();
 
     final txnList = await walletClient.getTxnList(
