@@ -11,6 +11,8 @@ import 'package:starcoin_wallet/wallet/client.dart';
 import 'package:http/http.dart';
 import 'package:starcoin_wallet/wallet/wallet_client.dart';
 
+import 'host_manager.dart';
+
 const RESOURCE_TAG = 1;
 
 const SENDSALT = 0;
@@ -61,13 +63,16 @@ class SubmitTransactionResult {
 class Account {
   KeyPair keyPair;
   String _address;
+  HostMananger hostMananger;
 
-  Account(KeyPair keyPair) {
-    this.keyPair = keyPair;
-  }
+  Account(this.keyPair,this.hostMananger);
 
-  static Account fromPrivateKey(Uint8List privateKey) {
-    return new Account(new KeyPair(privateKey));
+  void setHostManager(HostMananger hostMananger){
+    this.hostMananger= hostMananger;
+  }  
+
+  static Account fromPrivateKey(Uint8List privateKey,HostMananger hostMananger) {
+    return new Account(new KeyPair(privateKey),hostMananger);
   }
 
   String getAddress() {
@@ -78,9 +83,8 @@ class Account {
     return "0x" + _address;
   }
 
-  Future<Int128> balanceOfStc(String url) async {
+  Future<Int128> balanceOfStc() async {
     return await balanceOf(
-        url,
         StructTag(
             AccountAddress(
                 Helpers.hexToBytes("00000000000000000000000000000001")),
@@ -89,7 +93,7 @@ class Account {
             List()));
   }
 
-  Future<Int128> balanceOf(String url, StructTag tokenType) async {
+  Future<Int128> balanceOf(StructTag tokenType) async {
     final structTag = StructTag(
         AccountAddress(Helpers.hexToBytes("00000000000000000000000000000001")),
         Identifier("Account"),
@@ -101,7 +105,7 @@ class Account {
     final hash = lcsHash(structTag.bcsSerialize(), "STARCOIN::StructTag");
     path.addAll(hash);
 
-    final result = await getState(url, DataPathResourceItem(structTag));
+    final result = await getState(DataPathResourceItem(structTag));
 
     if (result == null) {
       return Int128(0, 0);
@@ -111,24 +115,24 @@ class Account {
     return balanceResource.token;
   }
 
-  Future<List<int>> getState(String url, DataPath path) async {
-    final client = WalletClient(url);
+  Future<List<int>> getState(DataPath path) async {
+    final client = WalletClient(hostMananger.getHttpBaseUrl());
 
     final sender = AccountAddress(this.keyPair.getAddressBytes());
     return await client.getStateJson(sender, path);
   }
 
   Future<SubmitTransactionResult> sendTransaction(
-      String url, TransactionPayload payload) async {
+      TransactionPayload payload) async {
     AccountAddress sender = AccountAddress(this.keyPair.getAddressBytes());
-    final client = StarcoinClient(url, Client());
+    final client = StarcoinClient(hostMananger.getHttpBaseUrl(), Client());
 
     final nodeInfoResult = await client.makeRPCCall('node.info');
 
     if (nodeInfoResult is Error || nodeInfoResult is Exception)
       throw nodeInfoResult;
 
-    final seq = await getSeq(url);
+    final seq = await getSeq();
 
     RawTransaction rawTxn = RawTransaction(sender, seq, payload, 20000000, 1,
         "0x1::STC::STC", nodeInfoResult['now_seconds'] + 40000, ChainId(nodeInfoResult['peer_info']['chain_info']['head']['chain_id']));
@@ -165,9 +169,8 @@ class Account {
   }
 
   Future<dynamic> getAccountStateSet(
-    String url,
   ) async {
-    final client = StarcoinClient(url, Client());
+    final client = StarcoinClient(hostMananger.getHttpBaseUrl(), Client());
 
     final sender = AccountAddress(this.keyPair.getAddressBytes());
 
@@ -180,7 +183,7 @@ class Account {
   Future<List<TokenBalance>> getAccountToken(
     String url,
   ) async {
-    final accountStateSet = await getAccountStateSet(url);
+    final accountStateSet = await getAccountStateSet();
 
     final result = List<TokenBalance>();
     if (accountStateSet != null) {
@@ -228,7 +231,6 @@ class Account {
   }
 
   Future<SubmitTransactionResult> transferSTC(
-    String url,
     Int128 amount,
     AccountAddress reciever,
     Bytes publicKey,
@@ -239,27 +241,27 @@ class Account {
         Identifier("STC"),
         List());
 
-    return await transferToken(url, amount, reciever, publicKey, structTag);
+    return await transferToken( amount, reciever, publicKey, structTag);
   }
 
-  Future<SubmitTransactionResult> transferToken(String url, Int128 amount,
+  Future<SubmitTransactionResult> transferToken(Int128 amount,
       AccountAddress reciever, Bytes publicKey, StructTag structTag) async {
 
     var transferScript = TransactionBuilder.encode_peer_to_peer_script_function(
         TypeTagStructItem(structTag), reciever, publicKey, amount);
 
     return await sendTransaction(
-        url, transferScript);
+         transferScript);
   }
 
-  Future<int> getSeq(String url) async {
+  Future<int> getSeq() async {
     var structTag = StructTag(
         AccountAddress(Helpers.hexToBytes("00000000000000000000000000000001")),
         Identifier("Account"),
         Identifier("Account"),
         List());
 
-    final result = await this.getState(url, DataPathResourceItem(structTag));
+    final result = await this.getState(DataPathResourceItem(structTag));
 
     if (result == null) {
       return 0;

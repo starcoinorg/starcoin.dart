@@ -1,7 +1,10 @@
+import 'dart:collection';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:optional/optional.dart';
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/serde/serde.dart';
+import 'package:starcoin_wallet/wallet/host_manager.dart';
 import 'package:starcoin_wallet/wallet/json_rpc.dart';
 
 import 'package:starcoin_wallet/wallet/account_manager.dart';
@@ -28,6 +31,13 @@ const address1 =
 const address2 =
     'e7f884d74d8372becba990f374bb92a3edd19be9d8d1e50cac38c79d6f57d1c0';
 const URL = "http://127.0.0.1:9850";
+
+HostMananger localHostManager(){
+  var hosts = HashSet<String>();
+  hosts.add("localhost");
+  var hostManager = SimpleHostManager(hosts);
+  return hostManager;
+}
 
 void main() {
   test('wallet test', () {
@@ -57,7 +67,7 @@ void main() {
     //var txpool_state = await client.sendRequest('txpool.state');
     //print('txpool state is $txpool_state');
 
-    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
+    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
     Account account = wallet.newAccount();
     AccountAddress sender = AccountAddress(account.keyPair.getAddressBytes());
 
@@ -162,16 +172,16 @@ void main() {
   });
 
   test('Account', () async {
-    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
+    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
+
     final walletClient = new WalletClient(URL);
     Account account = wallet.newAccount();
     Account reciever = wallet.newAccount();
 
-    final balance = await account.balanceOfStc(URL);
+    final balance = await account.balanceOfStc();
     print("balance is " + balance.low.toString());
 
     final result = await account.transferSTC(
-        URL,
         Int128(0, 20000),
         AccountAddress(reciever.keyPair.getAddressBytes()),
         Bytes(reciever.keyPair.getPublicAuthKey()));
@@ -192,7 +202,7 @@ void main() {
       print("txn_info is $txn");
     }
 
-    final accountStateSet = await account.getAccountStateSet(URL);
+    final accountStateSet = await account.getAccountStateSet();
     if (accountStateSet != null) {
       final resources = accountStateSet['resources'];
       for (var k in resources.keys) {
@@ -216,7 +226,6 @@ void main() {
     final tokenList = await account.getAccountToken(URL);
     if(tokenList.length>0){
     final result = await account.transferToken(
-        URL,
         Int128(0, 20000),
         AccountAddress(reciever.keyPair.getAddressBytes()),
         Bytes(reciever.keyPair.getPublicAuthKey()),
@@ -226,19 +235,19 @@ void main() {
   });
 
   test('Account Transfer Token', () async {
-    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
+    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
+
     final walletClient = new WalletClient(URL);
     Account account = wallet.newAccount();
     Account reciever = wallet.newAccount();
 
-    final balance = await account.balanceOfStc(URL);
+    final balance = await account.balanceOfStc();
     print("balance is " + balance.low.toString());
 
     final tokenList = await account.getAccountToken(URL);
     if(tokenList.length>0){      
       var sruct_tag=tokenList[0].token.type_params[0] as TypeTagStructItem;
       final result = await account.transferToken(
-        URL,
         Int128(0, 20000),
         AccountAddress(reciever.keyPair.getAddressBytes()),
         Bytes(reciever.keyPair.getPublicAuthKey()),
@@ -265,7 +274,8 @@ void main() {
     var rpc = JsonRPC("http://127.0.0.1:9850", http.Client());
     var client = PubSubClient(socket.cast<String>(), rpc);
     final walletClient = new WalletClient(URL);
-    final wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
+    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
+
     final account = wallet.newAccount();
 
     var subscription = client.addFilter(NewTxnSendRecvEventFilter(account));
@@ -308,7 +318,8 @@ void main() {
   });
 
   test('events', () async {
-    final wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
+    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
+
     final walletClient = new WalletClient(URL);
     final account = wallet.newAccount();
 
