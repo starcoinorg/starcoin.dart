@@ -276,7 +276,7 @@ void main() {
 
     final account = wallet.newAccount();
 
-    var subscription = await client.addFilter(NewTxnSendRecvEventFilter(account));
+    var subscription = client.addFilter(NewTxnSendRecvEventFilter(account));
     await for (var event in subscription) {
       print(await walletClient.getTransactionInfo(event['transaction_hash']));
       print(await walletClient.getTransaction(event['transaction_hash']));

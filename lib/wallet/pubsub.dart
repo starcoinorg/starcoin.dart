@@ -111,10 +111,10 @@ class PubSubClient {
 
   HostMananger hostMananger;
 
-  Future<Stream<T>> addFilter<T>(Filter<T> filter) async{
+  Stream<T> addFilter<T>(Filter<T> filter) {
     while(true){
       try{
-        return await tryConnect(filter);
+        return tryConnect(filter);
       }  on StateError catch(_e){ 
         hostMananger.removeFailureHost();
         log("remove host ${hostMananger.getHttpBaseUrl()} from host manager"); 
@@ -129,7 +129,7 @@ class PubSubClient {
     }
   }
 
-  Future<Stream<T>> tryConnect<T>(Filter<T> filter) async{
+  Stream<T> tryConnect<T>(Filter<T> filter) {
     connector = IOWebSocketChannel.connect(Uri.parse(hostMananger.getWsBaseUrl())).cast();
     _rpc = JsonRPC(hostMananger.getHttpBaseUrl(), Client());
 
@@ -143,9 +143,9 @@ class PubSubClient {
     _filters.add(instantiated);
 
     if (instantiated.isPubSub) {
-      await _registerToPubSub(instantiated, pubSubParams);
+      _registerToPubSub(instantiated, pubSubParams);
     } else {
-      await _registerToAPI(instantiated);
+      _registerToAPI(instantiated);
       //_startTicking();
     }
 
