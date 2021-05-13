@@ -129,6 +129,7 @@ class Account {
 
     final nodeInfoResult = await client.makeRPCCall('node.info');
 
+    print(nodeInfoResult);
     if (nodeInfoResult is Error || nodeInfoResult is Exception)
       throw nodeInfoResult;
 

@@ -16,7 +16,7 @@ dependencies:
   sha3: 0.1.1
   optional: '5.0.0'
   http: 0.12.2
-  json_rpc_2: 2.2.2
+  json_rpc_2: 3.0.1
   web_socket_channel: ^1.1.0  
   tuple: 1.0.3
 

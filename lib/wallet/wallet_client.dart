@@ -1,7 +1,9 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/wallet/account.dart';
 import 'package:starcoin_wallet/wallet/client.dart';
-import 'package:http/http.dart';
 import 'package:optional/optional.dart';
 import 'package:starcoin_wallet/wallet/helper.dart';
 import 'package:web_socket_channel/io.dart';
@@ -167,24 +169,44 @@ class WalletClient {
 }
 
 class BatchClient {
-  final String wsURL;
-  ClientController clientController;
 
-  BatchClient(this.wsURL) {
-    clientController = ClientController(
-        IOWebSocketChannel.connect(Uri.parse(this.wsURL)).cast<String>());
+  HostMananger hostMananger;
+
+  BatchClient(this.hostMananger) {
+  }
+
+  ClientController getClientController(){
+    return ClientController(
+        IOWebSocketChannel.connect(Uri.parse(this.hostMananger.getWsBaseUrl())).cast<String>());
   }
 
   Future<dynamic> getTransactions(List<String> hashList) async {
+
     final result =
-        await clientController.batchCall('chain.get_transaction', hashList);
+        await call('chain.get_transaction', hashList);
     return result;
   }
 
   Future<dynamic> getTransactionsInfo(List<String> hashList) async {
-    final result = await clientController.batchCall(
+    final result = await call(
         'chain.get_transaction_info', hashList);
     return result;
+  }
+
+  Future<dynamic> call(String url,List<String> params) async{
+    while(true) {
+      try{
+        var clientController = getClientController();
+        return await clientController.batchCall(url, params);
+      }on WebSocketException catch(e){ 
+        hostMananger.removeFailureHost();
+        log("remove host ${hostMananger.getHttpBaseUrl()} from host manager"); 
+          continue;     
+      }catch (e) {
+        log(e);
+        rethrow;
+      }
+    }
   }
 
   Future<List<TransactionWithInfo>> getTxnListBatch(

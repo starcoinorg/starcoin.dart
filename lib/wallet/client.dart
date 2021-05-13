@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:starcoin_wallet/wallet/host_manager.dart';
 import 'package:starcoin_wallet/wallet/json_rpc.dart';
 
@@ -18,22 +21,35 @@ class StarcoinClient {
 
   StarcoinClient(this.hostMananger);
   
+  final int retryHosts = 3;
   //StarcoinClient(String url, Client httpClient)
   //    : _jsonRpc = JsonRPC(url, httpClient);      
 
   Future<T> makeRPCCall<T>(String function, [List<dynamic> params]) async {
-    try {
-      final _jsonRpc = JsonRPC(hostMananger.getHttpBaseUrl(), Client());
-      final data = await _jsonRpc.call(function, params);
-      // ignore: only_throw_errors
-      if (data is Error || data is Exception) throw data;
-      return data.result as T;
-      ////
-      // ignore: avoid_catches_without_on_clauses
-    } catch (e) {
-      if (printErrors) print(e);
+    int retryCounts = 1;
+    while(true){
+      try {
+        final _jsonRpc = JsonRPC(hostMananger.getHttpBaseUrl(), Client());
+        final data = await _jsonRpc.call(function, params);
+        // ignore: only_throw_errors
+        if (data is Error || data is Exception) throw data;
+        return data.result as T;
+        ////
+        // ignore: avoid_catches_without_on_clauses
+      } on SocketException catch(e){ 
+        hostMananger.removeFailureHost();
+        log("remove host ${hostMananger.getHttpBaseUrl()} from host manager"); 
+        if(retryCounts<=retryHosts){
+          retryCounts++;
+          continue;     
+        }else {
+          break;
+        }
+      }catch (e) {
+        if (printErrors) print(e);
 
-      rethrow;
+        rethrow;
+      }
     }
   }
 }

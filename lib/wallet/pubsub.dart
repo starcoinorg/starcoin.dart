@@ -1,11 +1,16 @@
+import 'package:http/http.dart';
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/wallet/account.dart';
+import 'package:starcoin_wallet/wallet/host_manager.dart';
 import 'package:starcoin_wallet/wallet/json_rpc.dart';
 import 'package:json_rpc_2/json_rpc_2.dart' as rpc;
 import 'dart:async';
 import 'package:stream_channel/stream_channel.dart';
 import 'dart:developer';
 import 'package:optional/optional.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:pedantic/pedantic.dart';
 
 const _pingDuration = Duration(seconds: 2);
 
@@ -90,9 +95,9 @@ class NewTxnSendRecvEventFilter extends Filter<dynamic> {
 
 class PubSubClient {
   final List<InstantiatedFilter> _filters = [];
-  final StreamChannel<String> connector;
+  StreamChannel<String> connector;
 
-  final JsonRPC _rpc;
+  JsonRPC _rpc;
 
   Timer _ticker;
   bool _isRefreshing = false;
@@ -102,9 +107,32 @@ class PubSubClient {
 
   rpc.Peer _streamRpcPeer;
 
-  PubSubClient(this.connector, this._rpc);
+  PubSubClient(this.hostMananger);
 
-  Stream<T> addFilter<T>(Filter<T> filter) {
+  HostMananger hostMananger;
+
+  Future<Stream<T>> addFilter<T>(Filter<T> filter) async{
+    while(true){
+      try{
+        return await tryConnect(filter);
+      }  on StateError catch(_e){ 
+        hostMananger.removeFailureHost();
+        log("remove host ${hostMananger.getHttpBaseUrl()} from host manager"); 
+        continue;
+      } on WebSocketChannelException catch (e) {
+        hostMananger.removeFailureHost();
+        log("remove host ${hostMananger.getHttpBaseUrl()} from host manager"); 
+        continue;
+      } catch(e){
+        rethrow;
+      }
+    }
+  }
+
+  Future<Stream<T>> tryConnect<T>(Filter<T> filter) async{
+    connector = IOWebSocketChannel.connect(Uri.parse(hostMananger.getWsBaseUrl())).cast();
+    _rpc = JsonRPC(hostMananger.getHttpBaseUrl(), Client());
+
     final pubSubParams = filter.createPubSub();
     final supportsPubSub = pubSubParams != null;
 
@@ -115,9 +143,9 @@ class PubSubClient {
     _filters.add(instantiated);
 
     if (instantiated.isPubSub) {
-      _registerToPubSub(instantiated, pubSubParams);
+      await _registerToPubSub(instantiated, pubSubParams);
     } else {
-      _registerToAPI(instantiated);
+      await _registerToAPI(instantiated);
       //_startTicking();
     }
 
@@ -139,18 +167,19 @@ class PubSubClient {
 
   Future<void> _registerToPubSub(
       InstantiatedFilter filter, PubSubCreationParams params) async {
-    final peer = _connectWithPeer();
+    final peer = await _connectWithPeer();
 
     try {
       final response =
-          await peer.sendRequest('starcoin_subscribe', params.params);
+          await peer.sendRequest('starcoin_subscribe', params.params);      
       filter.id = response.toString();
-    } on rpc.RpcException catch (e, s) {
+    } catch (e, s) {
       filter.controller.addError(e, s);
       await filter.controller.close();
       _filters.remove(filter);
+      rethrow;
     }
-  }
+}
 
   void _startTicking() {
     _ticker ??= Timer.periodic(_pingDuration, (_) => _refreshFilters());
@@ -214,7 +243,7 @@ class PubSubClient {
     _filters.remove(filter);
 
     if (filter.isPubSub && !_clearingBecauseSocketClosed) {
-      final connection = _connectWithPeer();
+      final connection = await _connectWithPeer();
       await connection.sendRequest('starcoin_unsubscribe', [filter.id]);
     } else {
       await _rpc.call('eth_uninstallFilter', [filter.id]);
@@ -232,7 +261,7 @@ class PubSubClient {
     connector.sink.close();
   }
 
-  rpc.Peer _connectWithPeer() {
+  Future<rpc.Peer> _connectWithPeer() async{
     if (_streamRpcPeer != null && !_streamRpcPeer.isClosed) {
       return _streamRpcPeer;
     }
@@ -248,6 +277,9 @@ class PubSubClient {
       // .listen() will complete when the socket is closed, so reset client
       _streamRpcPeer = null;
       handleConnectionClosed();
+    }).catchError((e) {
+      //print(e);     // Finally, callback fires.
+      return;
     });
 
     return _streamRpcPeer;

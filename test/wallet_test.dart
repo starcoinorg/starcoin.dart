@@ -270,21 +270,19 @@ void main() {
   });
 
   test('sub', () async {
-    var socket = IOWebSocketChannel.connect(Uri.parse('ws://127.0.0.1:9870'));
-    var rpc = JsonRPC("http://127.0.0.1:9850", http.Client());
-    var client = PubSubClient(socket.cast<String>(), rpc);
+    var client = PubSubClient(localHostManager());
     final walletClient = new WalletClient(localHostManager());
     Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
 
     final account = wallet.newAccount();
 
-    var subscription = client.addFilter(NewTxnSendRecvEventFilter(account));
-
+    var subscription = await client.addFilter(NewTxnSendRecvEventFilter(account));
     await for (var event in subscription) {
       print(await walletClient.getTransactionInfo(event['transaction_hash']));
       print(await walletClient.getTransaction(event['transaction_hash']));
       break;
     }
+
   });
 
   test('node', () async {
@@ -318,21 +316,23 @@ void main() {
   });
 
   test('events', () async {
+
     Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
 
     final walletClient = new WalletClient(localHostManager());
     final account = wallet.newAccount();
+
+    final batchClient = new BatchClient(localHostManager());
+    final txnList2 = await batchClient.getTxnListBatch(walletClient, account,
+        Optional.of(0), Optional.empty(), Optional.empty());
+    print(txnList2[0].txn);
+    print(txnList2[0].txnInfo);
 
     final txnList = await walletClient.getTxnList(
         account, Optional.of(0), Optional.empty(), Optional.empty());
     print(txnList[0].txn);
     print(txnList[0].txnInfo);
 
-    final batchClient = new BatchClient('ws://127.0.0.1:9870');
-    final txnList2 = await batchClient.getTxnListBatch(walletClient, account,
-        Optional.of(0), Optional.empty(), Optional.empty());
-    print(txnList2[0].txn);
-    print(txnList2[0].txnInfo);
   });
 
   test('Hash', () {

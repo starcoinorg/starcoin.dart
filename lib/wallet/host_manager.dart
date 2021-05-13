@@ -3,7 +3,7 @@ abstract class HostMananger {
 
     String getWsBaseUrl();
 
-    void removeFailureHost(String host);
+    void removeFailureHost();
 
 }
 
@@ -27,9 +27,8 @@ class SimpleHostManager extends HostMananger{
       throw Exception("no available host");
   }
 
-
-  void removeFailureHost(String host){
-    hosts.remove(host.toLowerCase());
+  void removeFailureHost(){
+    hosts.remove(hosts.first);
   }
 
 }
