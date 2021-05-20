@@ -1,5 +1,5 @@
 import 'package:starcoin_wallet/wallet/account.dart';
-import 'package:starcoin_wallet/wallet/keyfactory.dart';
+import 'package:starcoin_wallet/wallet/keyfactory_bip44.dart';
 
 import 'host_manager.dart';
 

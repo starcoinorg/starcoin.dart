@@ -8,7 +8,6 @@ import 'package:starcoin_wallet/wallet/hash.dart';
 import 'package:starcoin_wallet/transaction_builder.dart';
 import 'package:starcoin_wallet/wallet/client.dart';
 
-import 'package:http/http.dart';
 import 'package:starcoin_wallet/wallet/wallet_client.dart';
 
 import 'host_manager.dart';

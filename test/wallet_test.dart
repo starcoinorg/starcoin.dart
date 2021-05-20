@@ -5,7 +5,6 @@ import 'package:optional/optional.dart';
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/serde/serde.dart';
 import 'package:starcoin_wallet/wallet/host_manager.dart';
-import 'package:starcoin_wallet/wallet/json_rpc.dart';
 
 import 'package:starcoin_wallet/wallet/account_manager.dart';
 import 'package:starcoin_wallet/wallet/keypair.dart';
@@ -21,8 +20,6 @@ import 'package:pedantic/pedantic.dart';
 import 'package:starcoin_wallet/wallet/hash.dart';
 import 'dart:async';
 import 'package:starcoin_wallet/wallet/pubsub.dart';
-import 'package:http/http.dart' as http;
-import 'package:web_socket_channel/io.dart';
 
 const String mnemonic =
     'danger gravity economy coconut flavor cart relax cactus analyst cradle pelican guitar balance there mail check where scrub topple shock connect valid follow flip';
@@ -40,19 +37,29 @@ HostMananger localHostManager(){
 }
 
 void main() {
+  test("account gen",(){  
+      Wallet wallet = new Wallet(mnemonic: "vital fun cereal burden announce claim awkward foster wash mass gap rebuild", salt: 'LIBRA',hostMananger: localHostManager());
+      final account=wallet.newAccount();
+      print(account.keyPair.getPrivateKeyHex());
+      print(account.keyPair.getPublicKeyHex());
+      print(account.keyPair.getAddress());
+    }
+  );
+
   test('wallet test', () {
     Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA');
     Account account = wallet.newAccount();
     print(Helpers.byteToHex(account.keyPair.getPrivateKey()));
     var public_key_hex = Helpers.byteToHex(account.keyPair.getPublicKey());
     print("public key is $public_key_hex");
-    expect("0x7d43d5269ddb89cdb7f7b812689bf135", account.getAddress());
+    print("account address is ${account.getAddress()}");
+    expect("0x7440b59b9336b5bd7a7850b7e7aba1fd", account.getAddress());
 
     var message = Uint8List.fromList([1, 2, 3, 4]);
     var result = account.keyPair.sign(message);
-    //print("result is " + Helpers.byteToHex(result));
+    print("result is " + Helpers.byteToHex(result));
     expect(Helpers.byteToHex(result),
-        "329675b43134113a079c6c61290c685780cb15959af6d0f144ec846d88456be0e66b4e830bdf6695de43769c344bd6769a186b4446de62693d5032e9daabf901");
+        "7b0e7eaffc2aacb10f9b3e84b88b52c8c079b7e503080ca6f0a65943d5e5c326514da59658fced190561f1d181401fffe143cdd757d94dfc9d20ac4939e5c108");
     expect(account.keyPair.verify(result, message), true);
   });
 
