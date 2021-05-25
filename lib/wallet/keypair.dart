@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:bech32/bech32.dart';
 import 'package:ed25519_dart_base/ed25519_dart.dart' as ed25519_dart;
-import 'package:hex/hex.dart';
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/wallet/helper.dart';
 import 'package:sha3/sha3.dart';
