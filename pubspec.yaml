@@ -12,7 +12,9 @@ dependencies:
   convert: ^2.1.1
   fixnum: ^0.10.9
   bip39: ^1.0.3
-  bip32: 1.0.6
+  bip32:
+    git:
+      url: git://github.com/starcoinorg/bip32
   ed25519_dart_base: ^0.0.1
   sha3: 0.1.1
   optional: '5.0.0'

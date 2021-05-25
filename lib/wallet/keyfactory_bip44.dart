@@ -6,7 +6,7 @@ import 'package:bip39/bip39.dart' as bip39;
 class KeyFactory {
 
   bip32.BIP32 node;
-  String path = "m/44'/60'/0'/0/";
+  String path = "m/44'/101010'/0'/0'/";
 
   KeyFactory(String salt, {String mnemonic}) {
     if (mnemonic != null && mnemonic.isNotEmpty) {
@@ -20,7 +20,7 @@ class KeyFactory {
   }
 
   KeyPair generateKey(int childDepth) {
-    var child=node.derivePath(path+childDepth.toString());
+    var child=node.derivePath(path+childDepth.toString()+"'");
     return KeyPair(child.privateKey);
   }
 

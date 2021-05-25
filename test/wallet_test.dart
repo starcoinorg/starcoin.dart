@@ -43,6 +43,12 @@ void main() {
       print(account.keyPair.getPrivateKeyHex());
       print(account.keyPair.getPublicKeyHex());
       print(account.keyPair.getAddress());
+
+      final account1=wallet.newAccount();
+      print(account1.keyPair.getPrivateKeyHex());
+      print(account1.keyPair.getPublicKeyHex());
+      print(account1.keyPair.getAddress());
+
     }
   );
 
@@ -53,13 +59,13 @@ void main() {
     var public_key_hex = Helpers.byteToHex(account.keyPair.getPublicKey());
     print("public key is $public_key_hex");
     print("account address is ${account.getAddress()}");
-    expect("0x7440b59b9336b5bd7a7850b7e7aba1fd", account.getAddress());
+    expect("0xaa2c4fb6710a8b8fc78bc14db9610a0b", account.getAddress());
 
     var message = Uint8List.fromList([1, 2, 3, 4]);
     var result = account.keyPair.sign(message);
     print("result is " + Helpers.byteToHex(result));
     expect(Helpers.byteToHex(result),
-        "7b0e7eaffc2aacb10f9b3e84b88b52c8c079b7e503080ca6f0a65943d5e5c326514da59658fced190561f1d181401fffe143cdd757d94dfc9d20ac4939e5c108");
+        "2a9e46c936f9ea08ef2f87ebb7f0be3d23a77293d75829e925309d13ae9d449efec27ae25a6c70156b2c7facecdbf3d25ad62f8d7a6039f5c67afbcb89316509");
     expect(account.keyPair.verify(result, message), true);
   });
 
