@@ -1,6 +1,8 @@
 import 'dart:collection';
 
+import 'package:bech32/bech32.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hex/hex.dart';
 import 'package:optional/optional.dart';
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/serde/serde.dart';
@@ -43,11 +45,26 @@ void main() {
       print(account.keyPair.getPrivateKeyHex());
       print(account.keyPair.getPublicKeyHex());
       print(account.keyPair.getAddress());
+      print(account.keyPair.getReceiptIdentifier().encode());
+
+      var auth_key_hex = "93dcc435cfca2dcf3bf44e9948f1f6a98e66a1f1b114a4b8a37ea16e12beeb6d";
+      var address_hex = "1603d10ce8649663e4e5a757a8681833";
+
+      var address = AccountAddress.fromHex(address_hex);
+      var authKey = HEX.decode(auth_key_hex);
+
+      var receipt= ReceiptIdentifier.decode("stc1pzcpazr8gvjtx8e895at6s6qcxwfae3p4el9zmnem738fjj83765cue4p7xc3ff9c5dl2zmsjhm4k63mmwta");
+      print("address is ${receipt.accountAddress}");
+      print("auth key is ${HEX.encode(receipt.authKey)}");
+
+      var identifier = ReceiptIdentifier.fromAddressAuthkey(address, authKey);
+      print(identifier.encode());
 
       final account1=wallet.newAccount();
       print(account1.keyPair.getPrivateKeyHex());
       print(account1.keyPair.getPublicKeyHex());
       print(account1.keyPair.getAddress());
+      print(account1.keyPair.getReceiptIdentifier().encode());
 
     }
   );
