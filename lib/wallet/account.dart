@@ -26,20 +26,17 @@ class TokenBalance {
 
 class AccountState {
   BigInt balance, sequenceNumber;
-  String address;
-  String publicKey;
+  ReceiptIdentifier receiptIdentifier;
   List<TokenBalance> assets;
 
   AccountState(
       {BigInt balance,
       BigInt sequenceNumber,
-      String address,
-      String publicKey,
+      ReceiptIdentifier receiptIdentifier,
       List<TokenBalance> assets}) {
     this.balance = balance == null ? BigInt.zero : balance;
     this.sequenceNumber = sequenceNumber == null ? BigInt.zero : sequenceNumber;
-    this.address = address;
-    this.publicKey = publicKey;
+    this.receiptIdentifier = receiptIdentifier;
     this.assets = assets;
   }
 }
