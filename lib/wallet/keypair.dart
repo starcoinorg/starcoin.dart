@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:bech32/bech32.dart';
 import 'package:ed25519_dart_base/ed25519_dart.dart' as ed25519_dart;
+import 'package:hex/hex.dart';
 import 'package:starcoin_wallet/starcoin/starcoin.dart';
 import 'package:starcoin_wallet/wallet/helper.dart';
 import 'package:sha3/sha3.dart';
@@ -18,6 +19,12 @@ class ReceiptIdentifier {
   factory ReceiptIdentifier.fromAddressAuthkey(AccountAddress accountAddress,Uint8List authKey){
     var identifier = ReceiptIdentifier(accountAddress);
     identifier.authKey = authKey;
+    return identifier;
+  }
+
+  factory ReceiptIdentifier.fromHex(String accountAddress,String authKey){    
+    var identifier = ReceiptIdentifier(AccountAddress.fromHex(accountAddress));
+    identifier.authKey = HEX.decode(authKey.replaceFirst("0x", ""));
     return identifier;
   }
 
