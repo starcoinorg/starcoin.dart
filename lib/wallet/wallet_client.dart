@@ -143,6 +143,20 @@ class WalletClient {
     return listInt;
   }
 
+  Future<Map<dynamic,dynamic>> getStateStateSet(AccountAddress sender) async {
+    final jsonRpc = StarcoinClient(this.hostMananger);
+    //"$address/1/$address::Account::Balance<0x00000000000000000000000000000001::STC::STC>";
+
+    final result = await jsonRpc
+        .makeRPCCall('state.get_account_state_set', [sender]);
+
+    if (result == null) {
+      return null;
+    }
+
+    return result;
+  }
+
   String formatAccessPath(AccountAddress sender, DataPath path) {
     var accessPath = sender.toString();
     if (path is DataPathCodeItem) {

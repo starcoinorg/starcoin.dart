@@ -264,6 +264,18 @@ void main() {
     }
   });
 
+  test('test state set', () async {
+    Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
+
+    final walletClient = new WalletClient(localHostManager());
+    Account account = wallet.newAccount();
+    print(account.getAddress());
+    print(account.keyPair.getPublicKeyHex());
+
+    final result = await walletClient.getStateStateSet(AccountAddress.fromHex(account.keyPair.getAddress()));
+    print(result.toString());
+  });
+
   test('Account Transfer Token', () async {
     Wallet wallet = new Wallet(mnemonic: mnemonic, salt: 'LIBRA',hostMananger: localHostManager());
 
