@@ -53,6 +53,32 @@ class Node {
     return result;
   }
 
+  Future<dynamic> importAccount(String accountAddress, String privateKey, String password) async {
+    final client = StarcoinClient(this.hostMananger);
+
+    var result =
+        await client.makeRPCCall('account.import', [accountAddress, password]);
+    return result;
+  }
+
+  Future<dynamic> setDefaultAccount(String accountAddress) async {
+    final client = StarcoinClient(this.hostMananger);
+
+    var result =
+        await client.makeRPCCall('account.set_default_account', [accountAddress]);
+    return result;
+  }
+
+
+  Future<dynamic> accountList() async {
+    final client = StarcoinClient(this.hostMananger);
+
+    var result =
+        await client.makeRPCCall('account.list', []);
+    return result;
+  }
+  
+
   Future<Int128> balanceOfStc(AccountAddress sender) async {
     return await balanceOf(
         sender,
