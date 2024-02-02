@@ -53,11 +53,11 @@ class Node {
     return result;
   }
 
-  Future<dynamic> importAccount(String privateKey, String password) async {
+  Future<dynamic> importAccount(String accountAddress, String privateKey, String password) async {
     final client = StarcoinClient(this.hostMananger);
 
     var result =
-        await client.makeRPCCall('account.import', [privateKey, password]);
+        await client.makeRPCCall('account.import', [accountAddress, privateKey, password]);
     return result;
   }
 
