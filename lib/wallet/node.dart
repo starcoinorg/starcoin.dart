@@ -61,6 +61,14 @@ class Node {
     return result;
   }
 
+  Future<dynamic> removeAccount(String accountAddress, String password) async {
+    final client = StarcoinClient(this.hostMananger);
+
+    var result =
+        await client.makeRPCCall('account.remove', [accountAddress, password]);
+    return result;
+  }
+
   Future<dynamic> setDefaultAccount(String accountAddress) async {
     final client = StarcoinClient(this.hostMananger);
 
